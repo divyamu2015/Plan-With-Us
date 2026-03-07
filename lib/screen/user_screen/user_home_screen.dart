@@ -586,7 +586,7 @@ void showBookingsDialog() {
               /// 👋 WELCOME TEXT
               /// ==========================
               Text(
-                "Welcome Back 👋",
+                "Welcome",
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -700,21 +700,23 @@ void showBookingsDialog() {
                   //   },
                   // ),
                   const SizedBox(height: 20),
-                  _FloatingMenuButton(
-                    label: "Logout",
-                    icon: Icons.exit_to_app,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return RoleSelectionScreen();
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 18),
+                    _buildElegantLogoutButton(),
+  const SizedBox(height: 20),
+                  // _FloatingMenuButton(
+                  //   label: "Logout",
+                  //   icon: Icons.exit_to_app,
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) {
+                  //           return RoleSelectionScreen();
+                  //         },
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                  // const SizedBox(height: 18),
                   // Close Button
                   FloatingActionButton(
                     backgroundColor: Colors.teal[800],

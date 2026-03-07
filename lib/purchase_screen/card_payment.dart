@@ -92,33 +92,30 @@ class _CardPaymentPageState extends State<CardPaymentPage> {
 
         // if (data.containsKey('message') &&
         //     data['message'] == 'Payment successful') {
-          showSuccess('Payment Successful! Redirecting...');
-         Future.delayed(const Duration(seconds: 2), () {
-            if (context.mounted) {
-         
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return ViewCartItem(
-                  userId: userid!,
-                );
-              },
-            ),
-          );
-           }
-          });
-          // ViewCartItem
-               // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) {
-              //       return ShopScreen(userId: userid!);
-              //     },
-              //   ),
-              // );
-           
-      //  }
+        showSuccess('Payment Successful! Redirecting...');
+        Future.delayed(const Duration(seconds: 2), () {
+          if (context.mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return ViewCartItem(userId: userid!);
+                },
+              ),
+            );
+          }
+        });
+        // ViewCartItem
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) {
+        //       return ShopScreen(userId: userid!);
+        //     },
+        //   ),
+        // );
+
+        //  }
       } else {
         showError('Payment failed: ${response.body}');
       }
@@ -289,10 +286,40 @@ class _CardPaymentPageState extends State<CardPaymentPage> {
                             expiryDateController,
                             "Expiry Date",
                             keyboardType: TextInputType.datetime,
-                            validator: (value) =>
-                                (value == null || value.isEmpty)
-                                ? 'Fill the field'
-                                : null,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Enter expiry date";
+                              }
+
+                              // Must match MM/YY format
+                              final regex = RegExp(r'^(0[1-9]|1[0-2])\/\d{2}$');
+                              if (!regex.hasMatch(value)) {
+                                return "Enter valid format MM/YY";
+                              }
+
+                              final parts = value.split('/');
+                              final int month = int.parse(parts[0]);
+                              final int year = int.parse("20${parts[1]}");
+
+                              final now = DateTime.now();
+
+                              // Create expiry date (last day of that month)
+                              final expiryDate = DateTime(year, month + 1, 0);
+
+                              if (expiryDate.isBefore(now)) {
+                                return "Card has expired";
+                              }
+
+                              // Optional: prevent unrealistic future dates (like 2099)
+                              if (year > now.year + 20) {
+                                return "Enter valid expiry year";
+                              }
+
+                              return null;
+                            },
+                            // (value == null || value.isEmpty)
+                            // ? 'Fill the field'
+                            // : null,
                           ),
                         ),
                         const SizedBox(width: 10),

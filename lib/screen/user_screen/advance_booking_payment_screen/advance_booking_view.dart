@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:house_construction_pro/screen/engineer_screen/engineer_home.dart';
+import 'package:house_construction_pro/screen/user_screen/user_home_screen.dart';
 import 'package:http/http.dart' as http;
 
 class AdvanceBookingPaymentScreen extends StatefulWidget {
@@ -31,6 +31,13 @@ class _AdvanceBookingPaymentScreenState
   final _cardController = TextEditingController();
   final _expiryController = TextEditingController();
   final _cvvController = TextEditingController();
+  int? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    userId = widget.userId;
+  }
 
   @override
   void dispose() {
@@ -51,12 +58,7 @@ class _AdvanceBookingPaymentScreenState
           children: [
             _amountCard(),
             const SizedBox(height: 20),
-            Row(
-              children: [
-                _tabButton("Card", 0),
-                _tabButton("Cash", 1),
-              ],
-            ),
+            Row(children: [_tabButton("Card", 0), _tabButton("Cash", 1)]),
             const SizedBox(height: 20),
             selectedTab == 0 ? _cardView() : _cashView(),
           ],
@@ -105,10 +107,7 @@ class _AdvanceBookingPaymentScreenState
           const SizedBox(height: 4),
           Text(
             "₹${widget.advanceAmount}",
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -127,6 +126,13 @@ class _AdvanceBookingPaymentScreenState
             validator: (value) =>
                 value!.isEmpty ? "Enter card holder name" : null,
           ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Text(
+              'Must be entered 16 Number',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
           _field(
             "Card Number",
             _cardController,
@@ -134,19 +140,56 @@ class _AdvanceBookingPaymentScreenState
             validator: (value) =>
                 value!.length < 16 ? "Enter valid card number" : null,
           ),
+
           _field(
             "Expiry Date (MM/YY)",
             _expiryController,
-            validator: (value) =>
-                value!.isEmpty ? "Enter expiry date" : null,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Enter expiry date";
+              }
+
+              // Must match MM/YY format
+              final regex = RegExp(r'^(0[1-9]|1[0-2])\/\d{2}$');
+              if (!regex.hasMatch(value)) {
+                return "Enter valid format MM/YY";
+              }
+
+              final parts = value.split('/');
+              final int month = int.parse(parts[0]);
+              final int year = int.parse("20${parts[1]}");
+
+              final now = DateTime.now();
+
+              // Create expiry date (last day of that month)
+              final expiryDate = DateTime(year, month + 1, 0);
+
+              if (expiryDate.isBefore(now)) {
+                return "Card has expired";
+              }
+
+              // Optional: prevent unrealistic future dates (like 2099)
+              if (year > now.year + 20) {
+                return "Enter valid expiry year";
+              }
+
+              return null;
+            },
+            //   value!.isEmpty ? "Enter expiry date" : null,
+          ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Text(
+              'Must be entered 3 Number',
+              style: TextStyle(color: Colors.red),
+            ),
           ),
           _field(
             "CVV",
             _cvvController,
             type: TextInputType.number,
             obscure: true,
-            validator: (value) =>
-                value!.length < 3 ? "Enter valid CVV" : null,
+            validator: (value) => value!.length < 3 ? "Enter valid CVV" : null,
           ),
           const SizedBox(height: 20),
           ElevatedButton(
@@ -195,9 +238,7 @@ class _AdvanceBookingPaymentScreenState
         validator: validator,
         decoration: InputDecoration(
           hintText: hint,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
       ),
     );
@@ -239,26 +280,28 @@ class _AdvanceBookingPaymentScreenState
     _showResult(success);
   }
 
- void _showResult(bool success) {
-  if (success) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Payment Successful")),
-    );
-
-    Future.delayed(const Duration(milliseconds: 800), () {
-      Navigator.pushAndRemoveUntil(
+  void _showResult(bool success) {
+    if (success) {
+      ScaffoldMessenger.of(
         context,
-        MaterialPageRoute(builder: (_) =>  DashboardScreen(userId:  widget.userId,)),
-        (route) => false,
-      );
-    });
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Payment Failed")),
-    );
-  }
-}
+      ).showSnackBar(const SnackBar(content: Text("Payment Successful")));
 
+      //showSnackBar( SnackBar(content: Text("Payment Successful"),backgroundColor: Colors.green,));
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return DashboardScreen(uderId: widget.userId);
+          },
+        ),
+      );
+      // });
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Payment Failed")));
+    }
+  }
 }
 
 /// ================= PAYMENT SERVICE =================
@@ -304,7 +347,6 @@ class PaymentService {
       print(response.body);
 
       return response.statusCode == 201;
-
     } catch (e) {
       print("Payment Error: $e");
       return false;

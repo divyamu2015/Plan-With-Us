@@ -4,7 +4,6 @@ import 'package:house_construction_pro/authantication/user_authentication/login_
 import 'package:house_construction_pro/purchase_screen/view_cart/view_cart_screen.dart';
 import 'package:house_construction_pro/purchase_screen/view_each_pro/view_each_pro_screen.dart';
 import 'package:house_construction_pro/purchase_screen/view_product_home/view_product_model.dart';
-import 'package:house_construction_pro/screen/engineer_screen/engineer_home.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -50,13 +49,14 @@ class _ShopScreenState extends State<ShopScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return LoginScreen();
-                  },
-                ),
-              ); // Close dialog (No)
+              Navigator.pop(context);
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(
+              //     builder: (context) {
+              //       return LoginScreen();
+              //     },
+              //   ),
+              // ); // Close dialog (No)
             },
             child: const Text("No"),
           ),
@@ -103,17 +103,17 @@ class _ShopScreenState extends State<ShopScreen> {
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 1,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search, color: Colors.grey[800]),
-            onPressed: () {},
-          ),
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(Icons.search, color: Colors.grey[800]),
+        //     onPressed: () {},
+        //   ),
 
-          // IconButton(
-          //   icon: Icon(Icons.shopping_cart_outlined, color: Colors.grey[800]),
-          //   onPressed: () {},
-          // ),
-        ],
+        //   // IconButton(
+        //   //   icon: Icon(Icons.shopping_cart_outlined, color: Colors.grey[800]),
+        //   //   onPressed: () {},
+        //   // ),
+        // ],
       ),
       body: loading
           ? Center(child: CircularProgressIndicator())
@@ -135,15 +135,17 @@ class _ShopScreenState extends State<ShopScreen> {
         onTap: (index) {
           if (index == 0) {
             // Navigate to Home Screen
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => DashboardScreen(userId: userId!),
-              ),
-            );
-          } else if (index == 1) {
-            // Navigate to Shop Screen (current screen)
-            // No need to navigate, already on ShopScreen
-          } else if (index == 2) {
+            // Navigator.of(context).pushReplacement(
+            //   MaterialPageRoute(
+            //     builder: (context) => ShopScreen(userId: userId!),
+            //   ),
+            // );
+          }
+          //  else if (index == 1) {
+          //   // Navigate to Shop Screen (current screen)
+          //   // No need to navigate, already on ShopScreen
+          // } 
+          else if (index == 1) {
             // Navigate to Cart Screen
             Navigator.of(context).push(
               MaterialPageRoute(
@@ -154,7 +156,7 @@ class _ShopScreenState extends State<ShopScreen> {
                 ),
               ),
             );
-          } else if (index == 3) {
+          } else if (index == 2) {
             _showLogoutDialog(context);
             // Navigate to Profile Screen
             // Navigator.of(context).push(
@@ -164,7 +166,7 @@ class _ShopScreenState extends State<ShopScreen> {
             // );
           }
         },
-        currentIndex: 1,
+        currentIndex: 0,
         selectedItemColor: Colors.purple,
         unselectedItemColor: Colors.grey,
         items: [
@@ -172,7 +174,7 @@ class _ShopScreenState extends State<ShopScreen> {
             icon: Icon(Icons.home_outlined),
             label: "Home",
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.store), label: "Shop"),
+         // BottomNavigationBarItem(icon: Icon(Icons.store), label: "Shop"),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart_outlined),
             label: "Cart",
