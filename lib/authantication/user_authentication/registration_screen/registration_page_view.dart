@@ -23,12 +23,15 @@ class _RegistrationPageState extends State<RegistrationPage>
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isloading = false;
-
+  bool isPasswordVisible = false;
+  bool isConfirmPasswordVisible = false;
   @override
   void initState() {
     super.initState();
@@ -41,6 +44,12 @@ class _RegistrationPageState extends State<RegistrationPage>
   @override
   void dispose() {
     _animationController.dispose();
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    addressController.dispose();
+    phoneController.dispose();
     super.dispose();
   }
 
@@ -85,7 +94,7 @@ class _RegistrationPageState extends State<RegistrationPage>
   }
 
   Future<void> saveForm() async {
-   // print(123);
+    // print(123);
     FocusScope.of(context).unfocus();
     setState(() {
       isloading = true;
@@ -97,7 +106,7 @@ class _RegistrationPageState extends State<RegistrationPage>
     setState(() {
       isloading = true;
     });
-  //  print('after validation');
+    //  print('after validation');
     context.read<RegisterBlocBloc>().add(
       RegisterBlocEvent.userRegister(
         name: nameController.text,
@@ -116,18 +125,22 @@ class _RegistrationPageState extends State<RegistrationPage>
     required TextEditingController controller,
     required String? Function(String?)? validator,
     TextInputType keyboardType = TextInputType.text,
-    int? maxLines,
+    int maxLines = 1, // ✅ default 1
+    bool obscureText = false,
+    Widget? suffixIcon,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: TextFormField(
-        maxLines: maxLines,
+        maxLines: obscureText ? 1 : maxLines, // ✅ fix
         controller: controller,
         validator: validator,
         keyboardType: keyboardType,
+        obscureText: obscureText,
         decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(color: Colors.black),
+          suffixIcon: suffixIcon,
           border: AnimatedInputBorder(
             animationValue: _animationController.value,
           ),
@@ -280,12 +293,53 @@ class _RegistrationPageState extends State<RegistrationPage>
                             "Password",
                             controller: passwordController,
                             keyboardType: TextInputType.visiblePassword,
+                            obscureText: !isPasswordVisible,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                isPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  isPasswordVisible = !isPasswordVisible;
+                                });
+                              },
+                            ),
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return "Please enter password";
                               }
                               if (value.length < 6) {
                                 return "Min 6 characters";
+                              }
+                              return null;
+                            },
+                          ),
+                          _buildTextField(
+                            "Confirmation Password",
+                            controller: confirmPasswordController,
+                            keyboardType: TextInputType.visiblePassword,
+                            obscureText: !isConfirmPasswordVisible,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                isConfirmPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  isConfirmPasswordVisible =
+                                      !isConfirmPasswordVisible;
+                                });
+                              },
+                            ),
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "Please enter confirmation password";
+                              }
+                              if (value != passwordController.text) {
+                                return "Password does not match";
                               }
                               return null;
                             },

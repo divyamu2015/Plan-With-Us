@@ -22,6 +22,7 @@ class _LoginScreenState extends State<LoginScreen>
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
   late AnimationController _animationController;
+  bool isPasswordVisible = false;
   bool isloading = false;
   String _selectedUserType = 'user';
   int? userId;
@@ -41,17 +42,20 @@ class _LoginScreenState extends State<LoginScreen>
     required TextEditingController controller,
     required String? Function(String?)? validator,
     TextInputType keyboardType = TextInputType.text,
-    // String? label,
+    bool obscureText = false,
+    Widget? suffixIcon,
   }) {
     return Padding(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       child: TextFormField(
         controller: controller,
         validator: validator,
         keyboardType: keyboardType,
+        obscureText: obscureText,
         decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(color: Colors.black),
+          suffixIcon: suffixIcon,
           border: AnimatedInputBorder(
             animationValue: _animationController.value,
           ),
@@ -228,9 +232,7 @@ class _LoginScreenState extends State<LoginScreen>
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                       builder: (context) {
-                        return DashboardScreen(
-                          uderId: userId!,
-                        );
+                        return DashboardScreen(uderId: userId!);
                         //  PropertyInputPage(
                         //   userId: userId!,
                         //   // engineerId: engineerId!,
@@ -377,8 +379,20 @@ class _LoginScreenState extends State<LoginScreen>
                               ),
                               _buildTextField(
                                 "Password",
-                                //  keyboardType: TextInputType.pas,
                                 controller: _passController,
+                                obscureText: !isPasswordVisible,
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    isPasswordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      isPasswordVisible = !isPasswordVisible;
+                                    });
+                                  },
+                                ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return "Enter your Password";

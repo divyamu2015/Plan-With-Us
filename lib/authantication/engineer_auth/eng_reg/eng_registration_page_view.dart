@@ -26,6 +26,9 @@ class _EngineeringRegistrationPageState
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+ 
   final TextEditingController ageController =
       TextEditingController(); // New controller for Age
   final TextEditingController addressController = TextEditingController();
@@ -40,7 +43,8 @@ class _EngineeringRegistrationPageState
   String? _selectedGender;
   double? latitude;
   double? longitude;
-
+bool isPasswordVisible = false;
+bool isConfirmPasswordVisible = false;
   final ImagePicker _picker = ImagePicker();
 
   File? _aadhaarImage;
@@ -72,6 +76,7 @@ class _EngineeringRegistrationPageState
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
+     confirmPasswordController.dispose();
     addressController.dispose();
     phoneController.dispose(); // No longer needed for direct use
     super.dispose();
@@ -156,18 +161,19 @@ class _EngineeringRegistrationPageState
     );
   }
 
-  Widget _buildTextField(
+ Widget _buildTextField(
     String label, {
     required TextEditingController controller,
     required String? Function(String?)? validator,
     TextInputType keyboardType = TextInputType.text,
-    int? maxLines,
-    bool obscureText = false, // Added for password
+    int maxLines = 1, // ✅ default 1
+    bool obscureText = false,
+    Widget? suffixIcon,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: TextFormField(
-        maxLines: maxLines ?? 1, // Use maxLines if provided, otherwise 1
+        maxLines: obscureText ? 1 : maxLines, // ✅ fix
         controller: controller,
         validator: validator,
         keyboardType: keyboardType,
@@ -175,6 +181,7 @@ class _EngineeringRegistrationPageState
         decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(color: Colors.black),
+          suffixIcon: suffixIcon,
           border: AnimatedInputBorder(
             animationValue: _animationController.value,
           ),
@@ -187,6 +194,7 @@ class _EngineeringRegistrationPageState
       ),
     );
   }
+
 
   Widget buildGenderSelector() {
     return Padding(
@@ -410,24 +418,56 @@ class _EngineeringRegistrationPageState
                                       const SizedBox(
                                         height: 10,
                                       ), // Reduced spacing
-                                      _buildTextField(
-                                        "Password",
-                                        controller: passwordController,
-                                        keyboardType:
-                                            TextInputType.visiblePassword,
-                                        obscureText:
-                                            true, // Make password obscure
-                                        validator: (value) {
-                                          if (value!.isEmpty) {
-                                            return "Please enter password";
-                                          }
-                                          if (value.length < 6) {
-                                            return "Min 6 characters";
-                                          }
-                                          return null;
-                                        },
-                                      ),
-
+                                     _buildTextField(
+  "Password",
+  controller: passwordController,
+  keyboardType: TextInputType.visiblePassword,
+  obscureText: !isPasswordVisible,
+  suffixIcon: IconButton(
+    icon: Icon(
+      isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+    ),
+    onPressed: () {
+      setState(() {
+        isPasswordVisible = !isPasswordVisible;
+      });
+    },
+  ),
+  validator: (value) {
+    if (value!.isEmpty) {
+      return "Please enter password";
+    }
+    if (value.length < 6) {
+      return "Min 6 characters";
+    }
+    return null;
+  },
+),
+                                  _buildTextField(
+  "Confirmation Password",
+  controller: confirmPasswordController,
+  keyboardType: TextInputType.visiblePassword,
+  obscureText: !isConfirmPasswordVisible,
+  suffixIcon: IconButton(
+    icon: Icon(
+      isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+    ),
+    onPressed: () {
+      setState(() {
+        isConfirmPasswordVisible = !isConfirmPasswordVisible;
+      });
+    },
+  ),
+  validator: (value) {
+    if (value!.isEmpty) {
+      return "Please enter confirmation password";
+    }
+    if (value != passwordController.text) {
+      return "Password does not match";
+    }
+    return null;
+  },
+),
                                       const SizedBox(height: 10),
                                       _buildTextField(
                                         "Phone Number",
