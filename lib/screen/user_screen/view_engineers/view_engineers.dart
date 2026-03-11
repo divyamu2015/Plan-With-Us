@@ -85,7 +85,8 @@ class _ViewEngineersProfileState extends State<ViewEngineersProfile> {
     //if (_fromKey.currentState!.validate()) {
     // For now, just show a message
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Profile Saved (Future Implementation)')),
+       SnackBar(content: Text('Thank Your for Intrested my profile'),
+      backgroundColor: Colors.green,),
     );
     Navigator.push(
       context,
@@ -292,7 +293,219 @@ class _ViewEngineersProfileState extends State<ViewEngineersProfile> {
       },
     );
   }
+Widget _buildPremiumLayout(response) {
+  return SingleChildScrollView(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
 
+        /// HEADER
+       Container(
+  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 50),
+  child: Stack(
+    alignment: Alignment.center,
+    children: [
+
+      /// Back Button (Left)
+      Align(
+        alignment: Alignment.centerLeft,
+        child: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.amber),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+
+      /// Center Title
+      const Text(
+        "Project Portfolio",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+
+    ],
+  ),
+),
+
+        /// PROFILE IMAGE
+        Center(child: _buildProfileImagePicker()),
+
+        const SizedBox(height: 15),
+
+        /// PROJECT TITLE
+        Center(
+          child: Text(
+            projectNameController.text,
+            style: const TextStyle(
+                color: Colors.white,
+                fontSize: 26,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+
+        Center(
+          child: Text(
+            "Principal Architect: ${engineerNameController.text}",
+            style: const TextStyle(
+                color: Colors.amber,
+                fontSize: 12,
+                letterSpacing: 1),
+          ),
+        ),
+
+        const SizedBox(height: 30),
+
+        /// PROJECT OVERVIEW CARD
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white10,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+
+                _buildOverviewItem(
+                    Icons.square_foot,
+                    "Plot Size",
+                    "${centController.text} Cent"),
+
+                _buildOverviewItem(
+                    Icons.architecture,
+                    "Built Up",
+                    "${sqrftController.text} Sqft"),
+
+                _buildOverviewItem(
+                    Icons.schedule,
+                    "Duration",
+                    timeDurationController.text),
+              ],
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 30),
+
+        /// FINANCIAL DETAILS
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white10,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Column(
+              children: [
+
+                _buildFinanceRow(
+                    "Expected Investment",
+                    expectedAmountController.text),
+
+                const SizedBox(height: 10),
+
+                _buildFinanceRow(
+                    "Additional Cost",
+                    additionalAmountController.text),
+
+                const Divider(color: Colors.white24),
+
+                _buildFinanceRow(
+                    "Total Amount",
+                    totalAmountController.text,
+                    highlight: true),
+              ],
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 30),
+
+        /// FEATURES SECTION
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            "Premium Features",
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+
+        const SizedBox(height: 15),
+
+        SizedBox(
+          height: 150,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: _features.length,
+            itemBuilder: (context, index) {
+              return _buildFeatureCard(_features[index]);
+            },
+          ),
+        ),
+
+        const SizedBox(height: 20),
+Align(
+  alignment: Alignment.bottomCenter,
+  child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: const Color(
+                                              0xFFD4AF37,
+                                            ),
+                                            foregroundColor: const Color(
+                                              0xFF1a0f0a,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                8,
+                                              ),
+                                            ),
+                                          ),
+                                          onPressed: _requestDetails,
+                                          child: const Text("Intrested"),
+                                        ),
+),
+      ],
+    ),
+  );
+}
+Widget _buildOverviewItem(IconData icon, String title, String value) {
+  return Column(
+    children: [
+      Icon(icon, color: Colors.orange),
+      const SizedBox(height: 5),
+      Text(title, style: const TextStyle(color: Colors.grey, fontSize: 10)),
+      Text(value,
+          style: const TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold)),
+    ],
+  );
+}
+Widget _buildFinanceRow(String title, String value, {bool highlight = false}) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(title,
+          style: const TextStyle(color: Colors.grey)),
+      Text(
+        value,
+        style: TextStyle(
+          color: highlight ? Colors.amber : Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      )
+    ],
+  );
+}
   Widget _buildForm() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -466,40 +679,40 @@ class _ViewEngineersProfileState extends State<ViewEngineersProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Engineer Project"),
-        backgroundColor: Colors.blueAccent[100],
-      ),
-      body: BlocBuilder<ViewEngineersBloc, ViewEngineersState>(
-        builder: (context, state) {
-          return state.when(
-            initial: () => const Center(child: Text('No data')),
-            loading: () => const Center(child: CircularProgressIndicator()),
-            success: (response) {
-              profileImageUrl = response.propertyImage;
-              workProofImageUrls = response.images;
-              engineerNameController.text = response.engineer;
-              projectNameController.text = response.projectName;
-              centController.text = response.cent;
-              sqrftController.text = response.squarefeet;
-              expectedAmountController.text = response.expectedAmount;
-              additionalAmountController.text = response.additionalAmount;
-              totalAmountController.text = response.totalAmount;
-              timeDurationController.text = response.timeDuration;
+  backgroundColor: const Color(0xFF1a0f2e),
+  body: BlocBuilder<ViewEngineersBloc, ViewEngineersState>(
+    builder: (context, state) {
+      return state.when(
+        initial: () => const Center(child: Text('No data')),
+        loading: () => const Center(child: CircularProgressIndicator()),
 
-              for (var feature in _features) {
-                feature.isSelected = response.additionalFeatures.contains(
-                  feature.name,
-                );
-              }
+        success: (response) {
 
-              return _buildForm();
-            },
-            error: (error) => Center(child: Text('Error: $error')),
-          );
+          profileImageUrl = response.propertyImage;
+          workProofImageUrls = response.images;
+
+          engineerNameController.text = response.engineer;
+          projectNameController.text = response.projectName;
+          centController.text = response.cent;
+          sqrftController.text = response.squarefeet;
+          expectedAmountController.text = response.expectedAmount;
+          additionalAmountController.text = response.additionalAmount;
+          totalAmountController.text = response.totalAmount;
+          timeDurationController.text = response.timeDuration;
+
+          for (var feature in _features) {
+            feature.isSelected =
+                response.additionalFeatures.contains(feature.name);
+          }
+
+          return _buildPremiumLayout(response);
         },
-      ),
-    );
+
+        error: (error) => Center(child: Text(error)),
+      );
+    },
+  ),
+);
   }
 }
 

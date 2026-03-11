@@ -39,9 +39,9 @@ class _PropertyInputPageState extends State<PropertyInputPage> {
   void initState() {
     super.initState();
     fetchCategoryItems();
-  
+
     userId = widget.userId;
-     centController.addListener(_updateSquareFeet);
+    centController.addListener(_updateSquareFeet);
   }
 
   void _updateSquareFeet() {
@@ -98,7 +98,7 @@ class _PropertyInputPageState extends State<PropertyInputPage> {
           category: int.parse(selectedCategory!),
         ),
       );
- }
+    }
   }
 
   Future<void> setCategoryId(int catId) async {
@@ -142,15 +142,15 @@ class _PropertyInputPageState extends State<PropertyInputPage> {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back,color: Colors.white),
           ),
-          title: const Text(
+          title:  Text(
             'Property Details',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22,color: Colors.white),
           ),
           centerTitle: true,
           elevation: 8,
-          backgroundColor: Colors.red[100],
+          backgroundColor:  Color(0xFF221F10),
           flexibleSpace: Container(
             // decoration: const BoxDecoration(
             //   gradient: LinearGradient(
@@ -229,207 +229,280 @@ class _PropertyInputPageState extends State<PropertyInputPage> {
               },
             );
           },
-          builder: (context, state) => SingleChildScrollView(
-            child: Container(
-              height: h,
-              width: w,
-              decoration: BoxDecoration(
-                // gradient: LinearGradient(colors: [Colors.grey,
-                // Colors.grey]),
-                // //color: Colors.grey
-                image: DecorationImage(
-                  opacity: 0.3,
-                  fit: BoxFit.cover,
-                  image: AssetImage('assets/images/bck.JPG'),
-                ),
+          builder: (context, state) => Container(
+            height: h,
+            width: w,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF221F10), // background-dark
+                  Color(0xFF221F10),
+                  Color(0xFFF8F8F5), // background-light
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 20,
-                  right: 20,
-                  top: 40,
-                  bottom: 30,
-                ),
-                child: Form(
-                  key: _formkey,
-                  child: Column(
-                    // mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      DropdownButtonFormField<String>(
-                        validator: (value) => (value == null || value.isEmpty)
-                            ? "Please Select Category"
-                            : null,
-                        decoration: InputDecoration(
-                          labelText: 'Select Category',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-
-                          // filled: true,
-                          // fillColor: Color.fromARGB(255, 245, 230, 195),
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 16,
-                            horizontal: 16,
-                          ),
-                        ),
-                        items: categoryItems
-                            .map(
-                              (item) => DropdownMenuItem<String>(
-                                value: item['id'].toString(),
-                                child: Text(
-                                  item['name'],
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    color: Color.fromARGB(255, 2, 2, 65),
+            ),
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 30,
+                    ),
+                    child: Column(
+                      children: [
+                        Column(
+                          children: [
+                            Stack(
+                              children: [
+                                SizedBox(
+                                  height: 260,
+                                  width: double.infinity,
+                                  child: Image.network(
+                                    "https://lh3.googleusercontent.com/aida-public/AB6AXuDdeCi0fbPtqJKEIWHraHCzB2GfBlhZ7jzOMnA30SopHwvye0pIzaQ9fxPYyCxvQTOHbBkL2SsWAR1In2YgNS25aNo9T-KYEe16LOkOsgZPt-0XAuUITqJc25SDw3vaLisEvPMWMIJVZ8FJhhVOGppgoDmOC6TBD7ixaCi8lIljAKgSsZTR8yVbMktZcbEKtSm_FI44iMo9ggs1Nxjr8NwWFuf9qmU9-4N9LX0A24JAQiLpsP3Xsum8o2xLH214XlRrJBL02jNm848",
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedCategory = value;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 25),
-                      TextFormField(
-                        keyboardType: TextInputType.number,
-                        controller: centController,
-                        validator: (value) => (value == null || value.isEmpty)
-                            ? "Please enter Cent"
-                            : null,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white70,
-                          label: Text("Plot Size(cent)"),
-                          // filled: true,
-                          // fillColor: Color.fromARGB(255, 245, 230, 195),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 2, 2, 65),
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 16,
-                          ),
-                        ),
-                        style: const TextStyle(
-                          color: Color(0xFF4A148C),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 22),
-                      TextFormField(
-                        readOnly: true,
-                        controller: sqrftController,
-                        validator: (value) => (value == null || value.isEmpty)
-                            ? "Please enter Square Feet"
-                            : null,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white70,
-                          label: Text("Square Feet"),
-
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 2, 2, 65),
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 16,
-                          ),
-                        ),
-                        style: const TextStyle(
-                          color: Color(0xFF4A148C),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 22),
-                      TextFormField(
-                        keyboardType: TextInputType.number,
-                        controller: amountController,
-                        validator: (value) => (value == null || value.isEmpty)
-                            ? "Please enter Amount"
-                            : null,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white70,
-                          label: Text("Expected Amount"),
-
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 2, 2, 65),
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 16,
-                          ),
-                        ),
-                        style: const TextStyle(
-                          color: Color(0xFF4A148C),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 54,
-                        child: ElevatedButton(
-                          onPressed: isLoading
-                              ? null
-                              : () {
-                                  if (_formkey.currentState!.validate()) {
-                                    submitDetails();
-                                  }
-                                },
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            elevation: 8,
-                            backgroundColor: Colors.red[200],
-
-                            shadowColor: const Color.fromARGB(
-                              255,
-                              206,
-                              191,
-                              247,
-                            ),
-                            textStyle: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                          child: isLoading
-                              ? const CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 3,
-                                )
-                              : Text(
-                                  'Submit',
-                                  style: TextStyle(
-                                    color: const Color.fromARGB(
-                                      255,
-                                      36,
-                                      26,
-                                      53,
+                                Container(
+                                  height: 260,
+                                  decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
+                                      colors: [
+                                        Colors.black87,
+                                        Colors.transparent,
+                                      ],
                                     ),
                                   ),
                                 ),
+                              ],
+                            ),
+
+                            // SizedBox(height: 10),
+                          ],
                         ),
-                      ),
-                    ],
+
+                        const SizedBox(height: 30),
+
+                        /// FORM CARD
+                        Container(
+                          padding: const EdgeInsets.all(25),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25),
+                            color: Colors.white,
+                            border: Border.all(
+                              color: const Color(0xFFF2D00D).withOpacity(0.3),
+                              width: 1.5,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.15),
+                                blurRadius: 25,
+                                offset: const Offset(0, 12),
+                              ),
+                            ],
+                          ),
+
+                          child: Form(
+                            key: _formkey,
+                            child: Column(
+                              children: [
+                                /// CATEGORY
+                                DropdownButtonFormField<String>(
+                                  validator: (value) =>
+                                      (value == null || value.isEmpty)
+                                      ? "Please Select Category"
+                                      : null,
+                                  decoration: InputDecoration(
+                                    labelText: "🏠 Select Category",
+                                    filled: true,
+                                    fillColor: const Color(0xFFF8F8F5),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 18,
+                                      vertical: 16,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: const BorderSide(
+                                        color: Color(0xFFF2D00D),
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                                  items: categoryItems
+                                      .map(
+                                        (item) => DropdownMenuItem<String>(
+                                          value: item['id'].toString(),
+                                          child: Text(
+                                            item['name'],
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedCategory = value;
+                                    });
+                                  },
+                                ),
+
+                                const SizedBox(height: 20),
+
+                                /// CENT
+                                TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  controller: centController,
+                                  validator: (value) =>
+                                      (value == null || value.isEmpty)
+                                      ? "Please enter Cent"
+                                      : null,
+                                  decoration: InputDecoration(
+                                    labelText: "🗺️ Plot Size (Cent)",
+                                    // prefixIcon: const Icon(Icons.landscape),
+                                    filled: true,
+                                    fillColor: const Color(0xFFF8F8F5),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 18,
+                                      vertical: 16,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: const BorderSide(
+                                        color: Color(0xFFF2D00D),
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 20),
+
+                                /// SQFT
+                                TextFormField(
+                                  readOnly: true,
+                                  controller: sqrftController,
+                                  validator: (value) =>
+                                      (value == null || value.isEmpty)
+                                      ? "Please enter Square Feet"
+                                      : null,
+                                  decoration: InputDecoration(
+                                    labelText: "📐 Square Feet",
+                                    // prefixIcon: const Icon(Icons.square_foot),
+                                    filled: true,
+                                    fillColor: const Color(0xFFF8F8F5),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 18,
+                                      vertical: 16,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: const BorderSide(
+                                        color: Color(0xFFF2D00D),
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 20),
+
+                                /// AMOUNT
+                                TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  controller: amountController,
+                                  validator: (value) =>
+                                      (value == null || value.isEmpty)
+                                      ? "Please enter Amount"
+                                      : null,
+                                  decoration: InputDecoration(
+                                    labelText: "💰 Expected Amount",
+                                    // prefixIcon: const Icon(
+                                    //   Icons.currency_rupee,
+                                    // ),
+                                    filled: true,
+                                    fillColor: const Color(0xFFF8F8F5),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 18,
+                                      vertical: 16,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: const BorderSide(
+                                        color: Color(0xFFF2D00D),
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 30),
+
+                                /// SUBMIT BUTTON
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 55,
+                                  child: ElevatedButton(
+                                    onPressed: isLoading
+                                        ? null
+                                        : () {
+                                            if (_formkey.currentState!
+                                                .validate()) {
+                                              submitDetails();
+                                            }
+                                          },
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 8,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                     backgroundColor: const Color.fromARGB(255, 163, 148, 71),
+                                    ),
+                                    child: isLoading
+                                        ? const CircularProgressIndicator(
+                                            color: Colors.white,
+                                          )
+                                        :  Text(
+                                            "Submit Property",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 1,
+                                              color: Colors.white
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ),

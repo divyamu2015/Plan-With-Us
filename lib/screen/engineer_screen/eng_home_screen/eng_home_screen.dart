@@ -58,7 +58,7 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
     final decoded = jsonDecode(res.body);
 
     setState(() {
-      bookings = (decoded['data'] as List?) ?? [];
+      bookings = decoded is List ? decoded : decoded['data'] ?? [];
       isLoading = false;
       error = null;
     });
@@ -71,7 +71,6 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
     });
   }
 }
-
 
   // ---------------- STATUS HELPERS ----------------
   List<dynamic> get pending =>
@@ -1150,4 +1149,4 @@ class _RejectedBookingScreenState extends State<RejectedBookingScreen> {
     );
   }
 }
-   
+    

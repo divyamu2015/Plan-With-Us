@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:house_construction_pro/purchase_screen/view_product_home/view_product_screen.dart';
+import 'package:house_construction_pro/screen/feedback_page.dart';
 import 'package:house_construction_pro/screen/role_screen.dart';
 import 'package:house_construction_pro/screen/user_screen/advance_booking_payment_screen/advance_booking_view.dart';
 import 'package:house_construction_pro/screen/user_screen/house_details/property_input_view.dart';
@@ -15,7 +16,7 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _DashboardScreenState extends State<DashboardScreen>   with SingleTickerProviderStateMixin {
   bool showMenu = false;
   int? userId;
   int notificationCount = 0; // For badge
@@ -24,6 +25,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String? bookingsError;
   bool showNotifications = true;
   bool showBookingsFromNotification = false;
+  late Animation<double> _rotationAnimation;
+ late AnimationController _controller;
   @override
   void initState() {
     super.initState();
@@ -33,6 +36,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       addNotification();
     });
     fetchUserBookings(userId!);
+     _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat();
+    _rotationAnimation = Tween<double>(
+      begin: 0,
+      end: 2 * 3.14159,
+    ).animate(_controller);
   }
 
   void addNotification() {
@@ -313,148 +324,216 @@ void showBookingsDialog() {
   );
 }
   Widget _buildBookingCards() {
-    if (bookingsLoading) {
-      return Center(child: CircularProgressIndicator());
-    }
-    if (bookingsError != null) {
-      return Center(
-        child: Text(bookingsError!, style: TextStyle(color: Colors.red)),
-      );
-    }
-    if (bookings.isEmpty) {
-      return Center(child: Text("No bookings found."));
-    }
+  if (bookingsLoading) {
+    return const Center(child: CircularProgressIndicator());
+  }
 
-    return Column(
-      children: bookings.map<Widget>((booking) {
-        final paymentStatus = booking['payment_status'] ?? 'Pending';
-        return Card(
-          margin: EdgeInsets.only(bottom: 16),
-          elevation: 3,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  booking['engineer_name'] ?? 'Unknown Engineer',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.teal[800],
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "Status: ${booking['status'] ?? 'N/A'}",
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(height: 6),
-                if ((booking['status']?.toLowerCase() ?? "") == "accepted") ...[
-                  SizedBox(height: 6),
-                  Text(
-                    "Requested: ${booking['user_name'] ?? 'N/A'} (${booking['user_phone'] ?? ''})",
-                    style: TextStyle(fontSize: 15, color: Colors.grey[700]),
-                  ),
-                  SizedBox(height: 6),
-                  Text(
-                    "Start: ${booking['start_date'] ?? '-'}  |  End: ${booking['end_date'] ?? '-'}",
-                    style: TextStyle(fontSize: 15),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "Advance Booking: ${booking['advance_booking'] ?? 'N/A'}",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: const Color.fromARGB(255, 27, 146, 33),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-
-                  Text(
-                    "payment Status: ${booking['payment_status'] ?? 'Pending'}",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color:
-                          paymentStatus.toString().toLowerCase() == "completed"
-                          ? Colors.green
-                          : Colors.red,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child:
-                        (paymentStatus.toString().toLowerCase() == "completed")
-                        ? ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(
-                                255,
-                                141,
-                                178,
-                                197,
-                              ),
-                            ),
-                            onPressed: () {
-                              showPaymentHistoryDialog(
-                                int.parse(booking['id'].toString()),
-                              );
-                            },
-
-                            child: Text(
-                              "HISTORY",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          )
-                        : ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      AdvanceBookingPaymentScreen(
-                                        userId: userId!,
-                                        advanceAmount: double.parse(
-                                          booking['advance_booking'].toString(),
-                                        ),
-                                        bookingId: int.parse(
-                                          booking['id'].toString(),
-                                        ),
-                                      ),
-                                ),
-                              );
-                            },
-                            child: const Text(
-                              "PAY",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                  ),
-                ]
-                // ...add more booking details if needed
-                else ...[
-                  SizedBox(height: 10),
-                  Text(
-                    "Reason: ${booking['reject_reason'] ?? 'No reason provided'}",
-                    style: TextStyle(fontSize: 15, color: Colors.red[700]),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        );
-      }).toList(),
+  if (bookingsError != null) {
+    return Center(
+      child: Text(bookingsError!, style: const TextStyle(color: Colors.red)),
     );
   }
+
+  if (bookings.isEmpty) {
+    return const Center(
+      child: Text(
+        "No bookings found.",
+        style: TextStyle(color: Colors.white),
+      ),
+    );
+  }
+
+  return Column(
+    children: bookings.map<Widget>((booking) {
+      final status = (booking['status'] ?? '').toString().toLowerCase();
+      final paymentStatus =
+          (booking['payment_status'] ?? 'pending').toString().toLowerCase();
+
+      return Card(
+        margin: const EdgeInsets.only(bottom: 16),
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+
+              /// ENGINEER NAME
+              Text(
+                booking['engineer_name'] ?? 'Unknown Engineer',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.teal[800],
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              /// STATUS
+              Text(
+                "Status: ${booking['status'] ?? 'N/A'}",
+                style: const TextStyle(fontSize: 16),
+              ),
+
+              const SizedBox(height: 10),
+
+              /// ---------------- PENDING ----------------
+              if (status == "pending") ...[
+                const Text(
+                  "Waiting for engineer approval.",
+                  style: TextStyle(color: Colors.orange),
+                ),
+              ],
+
+              /// ---------------- ACCEPTED ----------------
+              if (status == "accepted" || status == "completed") ...[
+                const SizedBox(height: 6),
+
+                Text(
+                  "Requested: ${booking['user_name'] ?? 'N/A'} (${booking['user_phone'] ?? ''})",
+                  style: TextStyle(fontSize: 15, color: Colors.grey[700]),
+                ),
+
+                const SizedBox(height: 6),
+
+                Text(
+                  "Start: ${booking['start_date'] ?? '-'}  |  End: ${booking['end_date'] ?? '-'}",
+                  style: const TextStyle(fontSize: 15),
+                ),
+
+                const SizedBox(height: 10),
+
+                Text(
+                  "Advance Booking: ${booking['advance_booking'] ?? 'N/A'}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Color.fromARGB(255, 27, 146, 33),
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                /// PAYMENT STATUS
+                Text(
+                  "Payment Status: ${booking['payment_status'] ?? 'Pending'}",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: paymentStatus == "completed"
+                        ? Colors.green
+                        : Colors.red,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+              ],
+
+              /// ---------------- PAY / HISTORY ----------------
+              if (status == "accepted") ...[
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: paymentStatus == "completed"
+                      ? ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 141, 178, 197),
+                          ),
+                          onPressed: () {
+                            showPaymentHistoryDialog(
+                              int.parse(booking['id'].toString()),
+                            );
+                          },
+                          child: const Text(
+                            "HISTORY",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      : ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    AdvanceBookingPaymentScreen(
+                                  userId: userId!,
+                                  advanceAmount: double.parse(
+                                    booking['advance_booking'].toString(),
+                                  ),
+                                  bookingId:
+                                      int.parse(booking['id'].toString()),
+                                ),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            "PAY",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                ),
+              ],
+
+              /// ---------------- COMPLETED ----------------
+              if (status == "completed") ...[
+                const SizedBox(height: 10),
+
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FeedbackPage(
+                            userid: userId,
+                            engineerid: booking['engineer_id'],
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.feedback, color: Colors.white),
+                    label: const Text(
+                      "Give Feedback",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+
+              /// ---------------- REJECTED ----------------
+              if (status == "rejected") ...[
+                const SizedBox(height: 10),
+
+                Text(
+                  "Reason: ${booking['reject_reason'] ?? 'No reason provided'}",
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.red[700],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      );
+    }).toList(),
+  );
+}
 
   Widget _buildDashboard() {
     return Card(
@@ -479,11 +558,32 @@ void showBookingsDialog() {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor:  Color(0xFF1a0f0a),
       appBar: AppBar(
-        title: Text('Plan with US'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+       // title: Text('Plan with US'),
+         backgroundColor:  Color(0xFF1a0f0a),   // foregroundColor: Colors.black87,
         elevation: 0,
+         automaticallyImplyLeading: false,
+          leading: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CircleAvatar(
+            //  backgroundColor: SereneTheme.primaryPink.withOpacity(0.1),
+              child: AnimatedBuilder(
+                animation: _rotationAnimation,
+                builder: (context, child) {
+                  return Transform.rotate(
+                    angle: _rotationAnimation.value,
+                    child: child,
+                  );
+                },
+                child: Image.asset(
+                  'assets/images/11.jpg',
+                  height: 35,
+                  width: 35,
+                ),
+              ),
+            ),
+          ),
         actions: [
           Stack(
             alignment: Alignment.topRight,

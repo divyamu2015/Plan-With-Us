@@ -9,13 +9,13 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 
-class ViewEngineerBookingDetails extends StatefulWidget {
+class ViewEngineerBookingDetail extends StatefulWidget {
   final int engineerId;
-  const ViewEngineerBookingDetails({super.key, required this.engineerId});
+  const ViewEngineerBookingDetail({super.key, required this.engineerId});
 
   @override
-  State<ViewEngineerBookingDetails> createState() =>
-      _ViewEngineerBookingDetailsState();
+  State<ViewEngineerBookingDetail> createState() =>
+      _ViewEngineerBookingDetailState();
 }
 
 Future<void> saveBookingId(int id) async {
@@ -28,8 +28,8 @@ Future<int?> getBookingId() async {
   return prefs.getInt('id'); // returns null if not found
 }
 
-class _ViewEngineerBookingDetailsState
-    extends State<ViewEngineerBookingDetails> {
+class _ViewEngineerBookingDetailState
+    extends State<ViewEngineerBookingDetail> {
   bool isLoading = true;
   String? error;
   List<dynamic> bookings = [];

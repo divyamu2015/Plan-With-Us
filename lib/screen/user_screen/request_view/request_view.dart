@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
 import 'package:house_construction_pro/constant_page.dart';
-import 'package:house_construction_pro/screen/feedback_page.dart';
 import 'package:house_construction_pro/screen/user_screen/request_view/bloc/request_bloc.dart';
 import 'package:house_construction_pro/screen/user_screen/request_view/getinput_model.dart';
+import 'package:house_construction_pro/screen/user_screen/user_home_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
@@ -44,7 +44,7 @@ class _RequestViewBookingState extends State<RequestViewBooking> {
   File? _suggestionFile;
   final _formKey = GlobalKey<FormState>();
   final List<Feature> _features = [];
-
+  File? _aadhaarImage;
   DateTime selectedDate = DateTime.now();
   TimeOfDay? startTime = TimeOfDay(hour: 9, minute: 0);
   TimeOfDay? endTime = TimeOfDay(hour: 17, minute: 0);
@@ -94,36 +94,35 @@ class _RequestViewBookingState extends State<RequestViewBooking> {
     if (picked != null) {
       setState(() {
         _startDateController.text = DateFormat(
-          'yyyy-MM-dd',
+          'dd-MM-yyyy',
         ).format(picked); // "2025-11-05"
       });
     }
   }
 
   Future<void> selectEndDate(BuildContext context) async {
-  if (_startDateController.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Please select start date first")),
+    if (_startDateController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please select start date first")),
+      );
+      return;
+    }
+
+    final startDate = DateFormat('dd-MM-yyyy').parse(_startDateController.text);
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: startDate.add(const Duration(days: 1)),
+      firstDate: startDate,
+      lastDate: startDate.add(const Duration(days: 365 * 2)),
     );
-    return;
+
+    if (picked != null) {
+      setState(() {
+        _endDateController.text = DateFormat('dd-MM-yyyy').format(picked);
+      });
+    }
   }
-
-  final startDate = DateTime.parse(_startDateController.text);
-
-  final DateTime? picked = await showDatePicker(
-    context: context,
-    initialDate: startDate.add(const Duration(days: 1)),
-    firstDate: startDate, // ❗ end date cannot be before start
-    lastDate: startDate.add(const Duration(days: 365 * 2)), // 2 years from start
-  );
- 
-  if (picked != null) {
-    setState(() {
-      _endDateController.text = DateFormat('yyyy-MM-dd').format(picked);
-    });
-  }
-}
-
 
   Future<GetPropertyInputModel> getInputDetails() async {
     if (userId == null) {
@@ -275,13 +274,17 @@ class _RequestViewBookingState extends State<RequestViewBooking> {
     print('Response body: ${response.body}');
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Success: ${response.body}")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("✅ Booking Successful"),
+          backgroundColor: Colors.green,
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Failed: ${response.statusCode} - ${response.body}"),
+        const SnackBar(
+          content: Text("❌ Booking Failed. Please try again."),
+          backgroundColor: Colors.red,
         ),
       );
     }
@@ -339,38 +342,50 @@ As the appointed engineer, I commit to completing the construction project on ti
   }
 
   Widget _buildFeatureCard(Feature feature) {
-    return Container(
-      width: 130,
-      margin: const EdgeInsets.only(right: 15),
-      decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.white24),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            feature.icon,
-            size: 40,
-            color: const Color.fromARGB(255, 233, 59, 82),
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          feature.isSelected = !feature.isSelected;
+        });
+      },
+      child: Container(
+        width: 140,
+        margin: const EdgeInsets.only(right: 16),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(.05),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: feature.isSelected
+                ? const Color(0xFFD4AF37)
+                : Colors.white10,
           ),
-          const SizedBox(height: 10),
-          Text(
-            feature.name,
-            style: const TextStyle(color: Color.fromARGB(255, 143, 15, 32)),
-          ),
-          const SizedBox(height: 10),
-          Checkbox(
-            value: feature.isSelected,
-            onChanged: (value) {
-              setState(() {
-                feature.isSelected = value!;
-              });
-            },
-            fillColor: WidgetStateProperty.all(Colors.green),
-          ),
-        ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(feature.icon, color: const Color(0xFFD4AF37), size: 34),
+
+            const SizedBox(height: 10),
+
+            Text(
+              feature.name,
+              style: const TextStyle(color: Colors.white, fontSize: 13),
+              textAlign: TextAlign.center,
+            ),
+
+            const SizedBox(height: 8),
+
+            Checkbox(
+              value: feature.isSelected,
+              onChanged: (v) {
+                setState(() {
+                  feature.isSelected = v!;
+                });
+              },
+              activeColor: const Color(0xFFD4AF37),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -457,7 +472,7 @@ As the appointed engineer, I commit to completing the construction project on ti
             child: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFFD9BFFB), Color(0xFFEFEAFE)],
+                  colors: [Color(0xFF0A0E1A), Color(0xFF1A0B2E)],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
@@ -470,24 +485,33 @@ As the appointed engineer, I commit to completing the construction project on ti
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.arrow_back),
-                              onPressed: () => Navigator.pop(context),
-                            ),
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  "Book Your Estimate",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 22,
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.arrow_back_ios_new,
+                                    color: Color(0xFFD4AF37),
                                   ),
+                                  onPressed: () => Navigator.pop(context),
                                 ),
                               ),
-                            ),
-                          ],
+
+                              const Text(
+                                "Book Your Estimate",
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFD4AF37),
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 18),
                         _buildTextField(
@@ -509,6 +533,7 @@ As the appointed engineer, I commit to completing the construction project on ti
                           readOnly: true,
                           icon: Icons.home,
                         ),
+                        const SizedBox(height: 10),
                         Row(
                           children: [
                             Expanded(
@@ -520,6 +545,7 @@ As the appointed engineer, I commit to completing the construction project on ti
                                   style: TextStyle(fontSize: 16),
                                 ),
                                 label: "Start Date",
+
                                 icon: Icons.calendar_today,
                                 onTap: () => selectStartDate(context),
                               ),
@@ -570,7 +596,7 @@ As the appointed engineer, I commit to completing the construction project on ti
                           inputType: TextInputType.number,
                         ),
                         SizedBox(height: 18),
-                        if (_pdfFile != null)
+                        if (_suggestionFile != null)
                           Stack(
                             children: [
                               Container(
@@ -588,7 +614,7 @@ As the appointed engineer, I commit to completing the construction project on ti
                                     SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
-                                        _pdfFile!.path.split('/').last,
+                                        _suggestionFile!.path.split('/').last,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
@@ -620,22 +646,35 @@ As the appointed engineer, I commit to completing the construction project on ti
                             ],
                           ),
                         const SizedBox(height: 16),
-                        ElevatedButton.icon(
-                          onPressed: pickPdfFile,
-                          icon: Icon(Icons.upload_file),
-                          label: Text('Upload Suggestion'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.deepPurple,
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _aadhaarImage != null
+                                ? Image.file(_aadhaarImage!, height: 150)
+                                : const Text(
+                                    "",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                            const SizedBox(height: 10),
+                            ElevatedButton.icon(
+                              onPressed: pickPdfFile,
+                              icon: Icon(Icons.upload_file),
+                              label: Text('Upload Suggestion'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.deepPurple,
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 10),
                         Text(
-                          'Additional Features:',
-                          style: TextStyle(
-                            fontSize: 18,
+                          'Additional Features'.toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            letterSpacing: 1.2,
+                            color: Color(0xFFD4AF37),
                             fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 72, 5, 83),
                           ),
                         ),
                         const SizedBox(height: 15),
@@ -663,8 +702,17 @@ As the appointed engineer, I commit to completing the construction project on ti
                                 child: const Text(
                                   "I agree to the Terms and Conditions",
                                   style: TextStyle(
+                                    fontSize: 13,
+                                    letterSpacing: 1.2,
+                                    color: Color.fromARGB(255, 103, 115, 216),
+                                    fontWeight: FontWeight.bold,
                                     decoration: TextDecoration.underline,
-                                    color: Colors.deepPurple,
+                                    decorationColor: Color.fromARGB(
+                                      255,
+                                      103,
+                                      115,
+                                      216,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -677,7 +725,9 @@ As the appointed engineer, I commit to completing the construction project on ti
                             Icons.double_arrow,
                             color: Colors.white,
                           ),
-                          activeThumbColor: Colors.deepPurple,
+                          activeThumbColor: const Color(
+                                            0xFFD4AF37,
+                                          ),
                           activeTrackColor: Colors.deepPurple.shade100,
                           onSwipe: () async {
                             if (!acceptedTerms) {
@@ -695,10 +745,11 @@ As the appointed engineer, I commit to completing the construction project on ti
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => FeedbackPage(
-                                    userid: userId,
-                                    engineerid: engineerId,
-                                  ),
+                                  builder: (context) =>DashboardScreen(uderId: userId!)
+                                  //  FeedbackPage(
+                                  //   userid: userId,
+                                  //   engineerid: engineerId,
+                                  // ),
                                 ),
                               );
                             }
@@ -734,21 +785,43 @@ As the appointed engineer, I commit to completing the construction project on ti
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 12),
-        Text(label, style: TextStyle(fontWeight: FontWeight.w500)),
-        SizedBox(height: 4),
+        const SizedBox(height: 14),
+
+        Text(
+          label.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 11,
+            letterSpacing: 1.2,
+            color: Color(0xFFD4AF37),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        const SizedBox(height: 6),
+
         TextFormField(
           controller: controller,
-          keyboardType: inputType,
           readOnly: readOnly,
+          keyboardType: inputType,
+          style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
-            prefixIcon: Icon(icon, size: 22),
+            prefixIcon: Icon(icon, color: const Color(0xFFD4AF37)),
             filled: true,
-            fillColor: Colors.white,
-            contentPadding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+            fillColor: Colors.white.withOpacity(.05),
+
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: Colors.white12),
+            ),
+
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: Colors.white12),
+            ),
+
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: Color(0xFFD4AF37)),
             ),
           ),
         ),
@@ -765,7 +838,15 @@ As the appointed engineer, I commit to completing the construction project on ti
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(fontWeight: FontWeight.w500)),
+        Text(
+          label.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 11,
+            letterSpacing: 1.2,
+            color: Color(0xFFD4AF37),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         SizedBox(height: 4),
         InkWell(
           onTap: onTap,
@@ -815,4 +896,3 @@ class Feature {
     this.isSelected = false,
   });
 }
-  
