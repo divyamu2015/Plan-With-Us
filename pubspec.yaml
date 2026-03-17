@@ -64,6 +64,7 @@ dependencies:
   circle_nav_bar: ^2.2.0
   flutter_screenutil: ^5.9.3
   typewritertext: ^3.0.9
+  flip_card: ^0.7.0
   
   
 dev_dependencies:

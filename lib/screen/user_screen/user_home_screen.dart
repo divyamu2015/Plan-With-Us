@@ -563,27 +563,27 @@ void showBookingsDialog() {
        // title: Text('Plan with US'),
          backgroundColor:  Color(0xFF1a0f0a),   // foregroundColor: Colors.black87,
         elevation: 0,
-         automaticallyImplyLeading: false,
-          leading: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-            //  backgroundColor: SereneTheme.primaryPink.withOpacity(0.1),
-              child: AnimatedBuilder(
-                animation: _rotationAnimation,
-                builder: (context, child) {
-                  return Transform.rotate(
-                    angle: _rotationAnimation.value,
-                    child: child,
-                  );
-                },
-                child: Image.asset(
-                  'assets/images/11.jpg',
-                  height: 35,
-                  width: 35,
-                ),
-              ),
-            ),
-          ),
+      //   automaticallyImplyLeading: false,
+          // leading: Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: CircleAvatar(
+          //   //  backgroundColor: SereneTheme.primaryPink.withOpacity(0.1),
+          //     child: AnimatedBuilder(
+          //       animation: _rotationAnimation,
+          //       builder: (context, child) {
+          //         return Transform.rotate(
+          //           angle: _rotationAnimation.value,
+          //           child: child,
+          //         );
+          //       },
+          //       child: Image.asset(
+          //         'assets/images/11.jpg',
+          //         height: 35,
+          //         width: 35,
+          //       ),
+          //     ),
+          //   ),
+          // ),
         actions: [
           Stack(
             alignment: Alignment.topRight,
@@ -621,7 +621,7 @@ void showBookingsDialog() {
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
-                      ),
+                        ),
                     ),
                   ),
                 ),

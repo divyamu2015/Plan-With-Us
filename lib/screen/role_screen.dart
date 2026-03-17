@@ -1,143 +1,260 @@
+import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:house_construction_pro/authantication/engineer_auth/eng_reg/eng_registration_page_view.dart';
 import 'package:house_construction_pro/authantication/user_authentication/login_screen/login_view_page.dart';
 
-class RoleSelectionScreen extends StatelessWidget {
-  const RoleSelectionScreen({super.key, this.userId=0});
-  final int userId;
+class RoleSelectionScreen extends StatefulWidget {
+  const RoleSelectionScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black87, // cute pastel background
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(
-            left: 3.0,
-            right: 3.0,
-            bottom: 300,
-            top: 300,
+  State<RoleSelectionScreen> createState() => _RoleSelectionScreenState();
+}
+
+class _RoleSelectionScreenState extends State<RoleSelectionScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _rotationAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat();
+    _rotationAnimation = Tween<double>(
+      begin: 0,
+      end: 2 * 3.14159,
+    ).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  _renderBg() {
+    return Container(
+      color: Color.fromARGB(255, 48, 27, 18),
+      // decoration:
+      // BoxDecoration(
+      //   // color: const Color(0xFFFFFFFF)
+      //   // Image.asset('assets/images/61804.jpg', fit: BoxFit.cover),
+      //   image: DecorationImage(
+      //     image: AssetImage('assets/images/61802.jpg'),
+      //     fit: BoxFit.cover,
+      //   ),
+      // ),
+    );
+  }
+
+  _renderAppBar(context) {
+    return MediaQuery.removePadding(
+      context: context,
+      removeBottom: true,
+      child: AppBar(elevation: 0.0, backgroundColor: Color(0x00FFFFFF)),
+    );
+  }
+
+  _renderContent(context) {
+    return Card(
+      elevation: 10.0,
+      margin: EdgeInsets.only(left: 32.0, right: 32.0, top: 20.0, bottom: 0.0),
+      color: Color(0x00000000),
+      child: FlipCard(
+        direction: FlipDirection.HORIZONTAL,
+        side: CardSide.FRONT,
+        speed: 1000,
+        onFlipDone: (status) {
+          print(status);
+        },
+        front: Container(
+          decoration: BoxDecoration(
+            color: Colors.orange[100],
+            //  color: const Color.fromARGB(255, 196, 223, 236),
+            borderRadius: BorderRadius.all(Radius.circular(8.0)),
           ),
-          child: Card(
-            color: Colors.white,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Choose Your Role',
-                  style: TextStyle(
-                    fontSize: 23,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 56, 12, 77),
-                    fontFamily: 'Montserrat', // or any cute rounded font
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: SizedBox(
+                  height: 310,
+                  width: 300,
+                  child: Image.asset(
+                    'assets/images/happycus.jpg',
+                    fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // User Button
-                    _RoleButton(
-                      fontsize: 20,
-                      label: 'User',
-                      icon: Icons.person,
-
-                      color: const Color.fromARGB(255, 216, 204, 100),
-
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return LoginScreen();
-                            },
-                          ),
-                        );
+              ),
+              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return LoginScreen();
                       },
-                      cuteDecoration: true,
                     ),
-                    SizedBox(width: 10),
-                    // Engineer Button
-                    _RoleButton(
-                      label: 'Engineer',
-                      icon: Icons.engineering,
-                      color: const Color.fromARGB(255, 89, 114, 194),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return EngineeringRegistrationPage();
-                            },
-                          ),
-                        );
-                        /* Handle Engineer */
-                      },
-                      cuteDecoration: false,
+                  );
+                },
+                label: Text(
+                  'User',
+                  style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+                ),
+                // icon: Icon(
+                //   Icons.person, // or Icons.person_outline
+                //   size: 50,
+                //   color: const Color.fromARGB(255, 248, 250, 250),
+                //   semanticLabel: 'Patient Icon',
+                // ),
+              ),
+              const SizedBox(height: 25),
+              Padding(
+                padding: const EdgeInsets.only(left: 40),
+                child: Row(
+                  children: [
+                    Text(
+                      'Click here to flip back ',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        '----->',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
+        ),
+        back: Container(
+          decoration: BoxDecoration(
+            color: Colors.orange[100],
+            borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: SizedBox(
+                  height: 310,
+                  width: 300,
+                  child: Image.asset(
+                    'assets/images/happyeng.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return EngineeringRegistrationPage();
+                      },
+                    ),
+                  );
+                },
+                label: Text(
+                  'Engineer',
+                  style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+                ),
+                // icon: Icon(
+                //   Icons.medical_services, // or Icons.person_outline
+                //   size: 50,
+                //   color: const Color.fromARGB(255, 248, 250, 250),
+                //   semanticLabel: 'Doctor Icon',
+                // ),
+              ),
+              const SizedBox(height: 25),
+              Padding(
+                padding: const EdgeInsets.only(left: 40),
+                child: Row(
+                  children: [
+                    Text(
+                      'Click here to flip front ',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        '<-----',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
-}
-
-class _RoleButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final Color color;
-  final VoidCallback onPressed;
-  final bool cuteDecoration;
-  final double fontsize;
-
-  const _RoleButton({
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.onPressed,
-    this.fontsize = 0,
-    this.cuteDecoration = false,
-  });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(horizontal: 28, vertical: 18),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(color: Colors.grey, blurRadius: 12, offset: Offset(0, 4)),
-          ],
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: Colors.white, size: 28),
-            SizedBox(width: 14),
-            Text(
-              label,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: const Color(0xFF1a0f0a),
+
+        appBar: AppBar(
+          automaticallyImplyLeading: false, // <- add this
+          // leading: CircleAvatar(
+          //   radius: 20,
+          //   child: Image.asset(
+          //       'assets/images/11.jpg',
+          //       height: 55,
+          //       width: 35,
+          //       cacheWidth: 100,
+          //       cacheHeight: 100,
+          //     ),
+          // ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Select Your Role',
+                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFD4AF37),
+                                  letterSpacing: 2,
+                                ),
               ),
+              const SizedBox(width: 10),
+            ],
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+        ),
+
+        body: Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            _renderBg(),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                _renderAppBar(context),
+                Expanded(flex: 4, child: _renderContent(context)),
+                Expanded(flex: 1, child: Container()),
+              ],
             ),
-            // if (cuteDecoration)
-            //   Padding(
-            //     padding: const EdgeInsets.only(left: 10),
-            //     child: Icon(
-            //       //Icons.star,
-            //       color: const Color.fromARGB(255, 247, 247, 234),
-            //       size: 18,
-            //     ), // cute accent
-            //   ),
           ],
         ),
       ),
