@@ -20,6 +20,17 @@ class _ShopScreenState extends State<ShopScreen> {
   bool loading = true;
   int? userId;
   int? productId;
+
+  static const Color kBg = Color(0xFF050505);
+  static const Color kCard = Color(0xFF0D0D0D);
+  static const Color kCard2 = Color(0xFF121212);
+  static const Color kGold = Color(0xFFD4AF37);
+  static const Color kGoldSoft = Color(0xFFE7C65A);
+  static const Color kText = Color(0xFFF5F1E8);
+  static const Color kSubText = Color(0xFFA4A099);
+  static const Color kMuted = Color(0xFF6E675D);
+  static const Color kBorder = Color(0xFF2A2316);
+
   @override
   void initState() {
     super.initState();
@@ -30,13 +41,11 @@ class _ShopScreenState extends State<ShopScreen> {
   Future<void> storeUserId(int productId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('id', productId);
-    // print('User ID stored: $userId');
   }
 
   Future<int?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     productId = prefs.getInt('id');
-    // print("Retrieved User ID: $userId");
     return productId;
   }
 
@@ -44,33 +53,47 @@ class _ShopScreenState extends State<ShopScreen> {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Logout Alert"),
-        content: const Text("Are you sure you want to logout?"),
+        backgroundColor: kCard2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(22),
+          side: const BorderSide(color: kBorder),
+        ),
+        title: const Text(
+          "Logout Alert",
+          style: TextStyle(color: kText, fontWeight: FontWeight.w700),
+        ),
+        content: const Text(
+          "Are you sure you want to logout?",
+          style: TextStyle(color: kSubText),
+        ),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) {
-              //       return LoginScreen();
-              //     },
-              //   ),
-              // ); // Close dialog (No)
             },
-            child: const Text("No"),
+            child: const Text(
+              "No",
+              style: TextStyle(color: kSubText),
+            ),
           ),
-          TextButton(
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: kGold,
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
             onPressed: () {
-              Navigator.of(context).pop(); // Close dialog first
+              Navigator.of(context).pop();
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => LoginScreen()),
-              ); // Navigate to login (Yes)
+              );
             },
             child: const Text(
               "Yes, Logout",
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(fontWeight: FontWeight.w700),
             ),
           ),
         ],
@@ -91,214 +114,406 @@ class _ShopScreenState extends State<ShopScreen> {
       setState(() {
         loading = false;
       });
-      // Handle error accordingly
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kBg,
       appBar: AppBar(
-        title: const Text('New Arrivals'),
+        backgroundColor: kBg,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: kText),
+          onPressed: () => Navigator.pop(context),
+        ),
         centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 1,
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.search, color: Colors.grey[800]),
-        //     onPressed: () {},
-        //   ),
-
-        //   // IconButton(
-        //   //   icon: Icon(Icons.shopping_cart_outlined, color: Colors.grey[800]),
-        //   //   onPressed: () {},
-        //   // ),
-        // ],
+        title: Column(
+          children: const [
+            SizedBox(height: 4),
+            Text(
+              'ENGINEERED EXCELLENCE',
+              style: TextStyle(
+                color: kGold,
+                fontSize: 9,
+                letterSpacing: 2.2,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'THE CURATED\nCOLLECTION',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: kText,
+                height: 0.95,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Serif',
+              ),
+            ),
+          ],
+        ),
+        toolbarHeight: 100,
       ),
       body: loading
-          ? Center(child: CircularProgressIndicator())
-          : GridView.builder(
-              padding: EdgeInsets.all(12),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.64,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-              ),
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                final p = products[index];
-                return ProductCard(product: p, userId: userId!);
-              },
-            ),
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: (index) {
-          if (index == 0) {
-            // Navigate to Home Screen
-            // Navigator.of(context).pushReplacement(
-            //   MaterialPageRoute(
-            //     builder: (context) => ShopScreen(userId: userId!),
-            //   ),
-            // );
-          }
-          //  else if (index == 1) {
-          //   // Navigate to Shop Screen (current screen)
-          //   // No need to navigate, already on ShopScreen
-          // } 
-          else if (index == 1) {
-            // Navigate to Cart Screen
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => ViewCartItem(
-                  userId: userId!,
-                  //productId: 0,
-                  //cartId: 0,
+          ? const Center(
+              child: CircularProgressIndicator(color: kGold),
+            )
+          : Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 4, bottom: 18),
+                  width: 72,
+                  height: 1.2,
+                  color: kGold.withOpacity(0.7),
                 ),
-              ),
-            );
-          } else if (index == 2) {
-            _showLogoutDialog(context);
-            // Navigate to Profile Screen
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => ProfileScreen(),
-            //   ),
-            // );
-          }
-        },
-        currentIndex: 0,
-        selectedItemColor: Colors.purple,
-        unselectedItemColor: Colors.grey,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: "Home",
+                Expanded(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 110),
+                    itemCount: products.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 18),
+                    itemBuilder: (context, index) {
+                      final p = products[index];
+                      return LuxuryProductCard(product: p, userId: userId!);
+                    },
+                  ),
+                ),
+              ],
+            ),
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          color: kBg,
+          border: Border(
+            top: BorderSide(color: kBorder, width: 1),
           ),
-         // BottomNavigationBarItem(icon: Icon(Icons.store), label: "Shop"),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_outlined),
-            label: "Cart",
+        ),
+        child: BottomNavigationBar(
+          onTap: (index) {
+            if (index == 0) {
+              return;
+            } else if (index == 1) {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ViewCartItem(
+                    userId: userId!,
+                  ),
+                ),
+              );
+            } else if (index == 2) {
+              _showLogoutDialog(context);
+            }
+          },
+          currentIndex: 0,
+          backgroundColor: kBg,
+          selectedItemColor: kGold,
+          unselectedItemColor: kMuted,
+          type: BottomNavigationBarType.fixed,
+          elevation: 0,
+          selectedLabelStyle: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.8,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: "Profile",
+          unselectedLabelStyle: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
           ),
-        ],
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.auto_awesome_mosaic_outlined),
+              activeIcon: Icon(Icons.auto_awesome_mosaic),
+              label: "COLLECTION",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_bag_outlined),
+              activeIcon: Icon(Icons.shopping_bag),
+              label: "CART",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.logout_outlined),
+              activeIcon: Icon(Icons.logout),
+              label: "LOGOUT",
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class ProductCard extends StatelessWidget {
+class LuxuryProductCard extends StatelessWidget {
   final Product product;
   final int userId;
-  const ProductCard({required this.product, super.key, required this.userId});
 
-  // Helper: resolve image URL if needed
+  const LuxuryProductCard({
+    required this.product,
+    super.key,
+    required this.userId,
+  });
+
+  static const Color kBg = Color(0xFF050505);
+  static const Color kCard = Color(0xFF0D0D0D);
+  static const Color kGold = Color(0xFFD4AF37);
+  static const Color kGoldSoft = Color(0xFFE7C65A);
+  static const Color kText = Color(0xFFF5F1E8);
+  static const Color kSubText = Color(0xFFA4A099);
+  static const Color kBorder = Color(0xFF2A2316);
+
   String getImageUrl(String relativeUrl) {
     return "https://417sptdw-8001.inc1.devtunnels.ms$relativeUrl";
   }
 
+  String getSubtitle(Product product) {
+    if ((product.quantity) <= 25) return "LIMITED STOCK | PREMIUM GRADE";
+    if ((product.quantity) <= 100) return "TRIPLE WASHED | FINE QUALITY";
+    return "ESSENTIAL INFRASTRUCTURE";
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(13),
-              child: Image.network(
-                getImageUrl(product.image),
-                height: 110,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  height: 110,
-                  color: Colors.grey[300],
-                  child: Icon(Icons.image, size: 32, color: Colors.grey[500]),
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              product.name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
-            ),
-            SizedBox(height: 5),
-            Row(
-              children: [
-                Text(
-                  "₹${product.price}",
-                  style: TextStyle(
-                    color: Colors.purple[200],
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Text(
-                  "₹${product.quantity}",
-                  style: TextStyle(
-                    color: Colors.purple[200],
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 7),
-            // Quantity progress bar (mock for demo, as per screenshot)
-            LinearProgressIndicator(
-              minHeight: 5,
-              value:
-                  (product.quantity.clamp(0, 200) /
-                  200.0), // Edit max as needed
-              backgroundColor: Colors.grey[200],
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.teal[200]!),
-            ),
-            SizedBox(height: 11),
-            SizedBox(
-              height: 20,
-              width: double.infinity,
-              child: MaterialButton(
-                color: Colors.purple[100],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  "View",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.setInt('id', product.id);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Product ID ${product.id} saved!')),
-                  );
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return ProductDetailScreen(
-                          productId: product.id,
-                          userId: userId,
-                        );
-                      },
-                    ),
-                  );
-                  // You can also navigate to a product detail page here.
-                },
-              ),
-            ),
+    final qty = (product.quantity).toDouble().clamp(0, 200);
+    final progress = qty / 200.0;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 2),
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        gradient: LinearGradient(
+          colors: [
+            const Color(0xFF101010),
+            const Color(0xFF080808),
           ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        border: Border.all(
+          color: kGold.withOpacity(0.28),
+          width: 0.8,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: kGold.withOpacity(0.05),
+            blurRadius: 30,
+            spreadRadius: 1,
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.45),
+            blurRadius: 20,
+            offset: const Offset(0, 14),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildImage(),
+          const SizedBox(height: 14),
+          Text(
+            getSubtitle(product),
+            style: const TextStyle(
+              color: kGold,
+              fontSize: 8,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.2,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            product.name,
+            style: const TextStyle(
+              color: kText,
+              fontSize: 17,
+              height: 1.0,
+              fontWeight: FontWeight.w500,
+              fontFamily: 'Serif',
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Premium construction material with dependable quality and refined finish for modern builds.",
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: kSubText.withOpacity(0.88),
+              fontSize: 11,
+              height: 1.45,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                "₹${product.price}",
+                style: const TextStyle(
+                  color: kGoldSoft,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: 'Serif',
+                ),
+              ),
+              const SizedBox(width: 6),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Text(
+                  "/ qty ${product.quantity}",
+                  style: const TextStyle(
+                    color: kSubText,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: LinearProgressIndicator(
+              minHeight: 4,
+              value: progress,
+              backgroundColor: const Color(0xFF1E1A14),
+              valueColor: const AlwaysStoppedAnimation<Color>(kGold),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: kGold.withOpacity(0.9)),
+                    foregroundColor: kGold,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  onPressed: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setInt('id', product.id);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Colors.black87,
+                        content: Text(
+                          'Your Product View more details!',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ProductDetailScreen(
+                            productId: product.id,
+                            userId: userId,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "View Details  →",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+              // const SizedBox(width: 12),
+              // Container(
+              //   decoration: BoxDecoration(
+              //     color: kGold,
+              //     borderRadius: BorderRadius.circular(24),
+              //   ),
+              //   child: InkWell(
+              //     borderRadius: BorderRadius.circular(24),
+              //     onTap: () async {
+              //       final prefs = await SharedPreferences.getInstance();
+              //       await prefs.setInt('id', product.id);
+              //       ScaffoldMessenger.of(context).showSnackBar(
+              //         SnackBar(
+              //           backgroundColor: Colors.black87,
+              //           content: Text(
+              //             'Product ID ${product.id} saved!',
+              //             style: const TextStyle(color: Colors.white),
+              //           ),
+              //         ),
+              //       );
+              //       Navigator.of(context).push(
+              //         MaterialPageRoute(
+              //           builder: (context) {
+              //             return ProductDetailScreen(
+              //               productId: product.id,
+              //               userId: userId,
+              //             );
+              //           },
+              //         ),
+              //       );
+              //     },
+              //     child: const Padding(
+              //       padding: EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+              //       child: Text(
+              //         "Reserve Batch",
+              //         style: TextStyle(
+              //           color: Colors.black,
+              //           fontWeight: FontWeight.w700,
+              //           fontSize: 12,
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImage() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(22),
+      child: Container(
+        height: 210,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.blueGrey.shade900.withOpacity(0.25),
+              Colors.black,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Image.network(
+          getImageUrl(product.image),
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => Container(
+            color: const Color(0xFF111111),
+            child: const Center(
+              child: Icon(
+                Icons.inventory_2_outlined,
+                size: 46,
+                color: Colors.white30,
+              ),
+            ),
+          ),
+          loadingBuilder: (context, child, progress) {
+            if (progress == null) return child;
+            return const Center(
+              child: CircularProgressIndicator(
+                color: kGold,
+                strokeWidth: 2,
+              ),
+            );
+          },
         ),
       ),
     );

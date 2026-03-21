@@ -18,7 +18,7 @@ class _EngineerRequestDetailsPageState
   bool isLoading = true;
   bool isUpdating = false;
 
-  final String baseUrl = "https://417sptdw-8001.inc1.devtunnels.ms"; // Android emulator
+  final String baseUrl = "https://417sptdw-8001.inc1.devtunnels.ms";
 
   @override
   void initState() {
@@ -26,12 +26,11 @@ class _EngineerRequestDetailsPageState
     fetchBookingDetails();
   }
 
-  // ================= FETCH BOOKING =================
-
   Future<void> fetchBookingDetails() async {
     final response = await http.get(
       Uri.parse(
-          "$baseUrl/userapp/engineer_view_payment_of_booking/${widget.bookingId}/"),
+        "$baseUrl/userapp/engineer_view_payment_of_booking/${widget.bookingId}/",
+      ),
     );
 
     if (response.statusCode == 200) {
@@ -43,14 +42,13 @@ class _EngineerRequestDetailsPageState
     }
   }
 
-  // ================= UPDATE STATUS =================
-
   Future<void> updateWorkStatus() async {
     setState(() => isUpdating = true);
 
     final response = await http.patch(
       Uri.parse(
-          "$baseUrl/userapp/engineer_update_status/${widget.bookingId}/"),
+        "$baseUrl/userapp/engineer_update_status/${widget.bookingId}/",
+      ),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({"status": "completed"}),
     );
@@ -64,299 +62,365 @@ class _EngineerRequestDetailsPageState
 
     setState(() => isUpdating = false);
   }
-
-  @override
-  Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F8F8),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF006C75)),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          "Update Work Status",
-          style: TextStyle(
-            color: Color(0xFF006C75),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _buildStatusCard(),
-            const SizedBox(height: 16),
-            _buildProjectInfoCard(),
-            const SizedBox(height: 16),
-            _buildFinancialCard(),
-            const SizedBox(height: 16),
-           // _buildSuggestionCard(),
-          ],
-        ),
-      ),
-
-      // ================= WORK COMPLETE BUTTON =================
-
-    bottomNavigationBar: bookingData?["status"] == "completed"
-    ? null
-    : Padding(
-        padding: const EdgeInsets.all(16),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          onPressed: isUpdating
-              ? null
-              : () {
-                  final paymentStatus =
-                      bookingData?["payment"]?["status"];
-
-                  if (paymentStatus == "completed") {
-                    updateWorkStatus();
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content:
-                            Text("Payment not completed yet"),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
-                },
-          child: isUpdating
-              ? const CircularProgressIndicator(
-                  color: Colors.white)
-              : const Text(
-                  "Work Completed",
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                ),
-        ),
-      ),
-
-    );
-  }
-
-  // ================= STATUS CARD =================
-
-  Widget _buildStatusCard() {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Request Status",
-                  style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w600),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: bookingData?["status"] == "completed"
-                        ? Colors.green.shade100
-                        : Colors.orange.shade100,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    bookingData?["status"].toString().toUpperCase() ?? "",
-                    style: TextStyle(
-                        color: bookingData?["status"] == "completed"
-                            ? Colors.green
-                            : Colors.orange,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold),
-                  ),
-                )
-              ],
-            ),
-            const Divider(height: 30),
-
-            // Client
-            _buildContactRow(
-              title: "Client",
-              name: bookingData?["user_name"] ?? "",
-              phone: bookingData?["user_phone"] ?? "",
-            ),
-
-            const Divider(height: 30),
-
-            // Engineer
-            _buildContactRow(
-              title: "Engineer",
-              name: bookingData?["engineer_name"] ?? "",
-              phone: bookingData?["engineer_phone"] ?? "",
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContactRow({
-  required String title,
-  required String name,
-  required String phone,
-}) {
-  return Row(
-    children: [
-      // Left Side (Title + Name)
-      Expanded(
-        child: Row(
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(  // Prevent overflow
-              child: Text(
-                name,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-
-      // Right Side (Phone)
-      Text(
-        phone,
-        style: const TextStyle(
-          fontSize: 13,
-          color: Colors.grey,
-        ),
+//   const Color(0xFF0D2C21).withOpacity(0.97),
+     //   const Color(0xFF0A241B).withOpacity(0.98),
+    
+ BoxDecoration _cardDecoration() {
+  return BoxDecoration(
+    borderRadius: BorderRadius.circular(28),
+    gradient: LinearGradient(
+      colors: [
+       const Color.fromARGB(255, 16, 75, 54).withOpacity(0.98),
+     const Color.fromARGB(255, 16, 75, 54).withOpacity(0.98),
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    border: Border.all(
+      color: Colors.white.withOpacity(0.10),
+      width: 1.2,
+    ),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.28),
+        blurRadius: 28,
+        offset: const Offset(0, 14),
       ),
     ],
   );
 }
 
-
-  // ================= PROJECT INFO =================
-
-  Widget _buildProjectInfoCard() {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Project Information",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              children: (bookingData?["features"] as List? ?? [])
-    .map((feature) => Chip(label: Text(feature.toString())))
-    .toList(),
-
-            ),
-            const SizedBox(height: 16),
-            Text(
-              "${bookingData?["cent"]} Cent (${bookingData?["sqft"]} Sq.Ft)",
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-                "${bookingData?["start_date"]} to ${bookingData?["end_date"]}"),
-            const SizedBox(height: 8),
-            Text(
-              "Site Address: ${bookingData?["address"]}",
-              style: const TextStyle(color: Colors.grey),
-            ),
-          ],
+  @override
+  Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        backgroundColor: Color(0xFF081C15),
+        body: Center(
+          child: CircularProgressIndicator(color: Color(0xFF2CF0A0)),
         ),
+      );
+    }
+
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+             Color.fromARGB(255, 1, 100, 72),
+           
+             Color.fromARGB(255, 1, 100, 72),
+            Color.fromARGB(255, 1, 100, 72),
+           
+            Color.fromARGB(255, 13, 58, 44),
+            Color.fromARGB(255, 1, 100, 72),
+            Color(0xFF0A2D22),
+           //  Color(0xFF0A2D22),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF2CF0A0)),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: const Text(
+            "UPDATE WORK STATUS",
+               style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 4,
+                fontSize: 16,
+              ),
+          ),
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                _buildStatusCard(),
+                const SizedBox(height: 16),
+                _buildProjectInfoCard(),
+                const SizedBox(height: 16),
+                _buildFinancialCard(),
+                const SizedBox(height: 16),
+                // _buildSuggestionCard(),
+              ],
+            ),
+          ),
+        ),
+        bottomNavigationBar: bookingData?["status"] == "completed"
+            ? null
+            : Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2CF0A0),
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 17),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    textStyle: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  onPressed: isUpdating
+                      ? null
+                      : () {
+                          final paymentStatus = bookingData?["payment"]?["status"];
+
+                          if (paymentStatus == "completed") {
+                            updateWorkStatus();
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Payment not completed yet"),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                  child: isUpdating
+                      ? const SizedBox(
+                          height: 22,
+                          width: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Colors.black,
+                          ),
+                        )
+                      : const Text(
+                          "WORK COMPLETED",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                ),
+              ),
       ),
     );
   }
 
-  // ================= FINANCIAL CARD =================
+  Widget _buildStatusCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: _cardDecoration(),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "REQUEST STATUS",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white70,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1,
+                ),
+              ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: bookingData?["status"] == "completed"
+                      ? Colors.green.shade100
+                      : Colors.orange.shade100,
+                      //
+             
+             
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  bookingData?["status"].toString().toUpperCase() ?? "",
+                  style: TextStyle(
+                    color: bookingData?["status"] == "completed"
+                        ? const Color.fromARGB(255, 30, 148, 34)
+                        : const Color.fromARGB(255, 163, 102, 10),
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1
+                  ),
+                ),
+              )
+            ],
+          ),
+          const Divider(height: 30, color: Colors.white24),
+          _buildContactRow(
+            title: "Client",
+            name: bookingData?["user_name"] ?? "",
+            phone: bookingData?["user_phone"] ?? "",
+          ),
+          const Divider(height: 30, color: Colors.white24),
+          _buildContactRow(
+            title: "Engineer",
+            name: bookingData?["engineer_name"] ?? "",
+            phone: bookingData?["engineer_phone"] ?? "",
+          ),
+        ],
+      ),
+    );
+  }
 
- Widget _buildFinancialCard() {
-  final payment = bookingData?["payment"];
-  final paymentStatus = payment?["status"];
-
-  return Container(
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: const Color(0xFF006C75),
-      borderRadius: BorderRadius.circular(16),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildContactRow({
+    required String title,
+    required String name,
+    required String phone,
+  }) {
+    return Row(
       children: [
-        Text(
-          "Expected Budget: ₹${bookingData?["expected_amount"] ?? "0"}",
-          style: const TextStyle(color: Colors.white),
+        Expanded(
+          child: Row(
+            children: [
+              Text(
+                "${title.toUpperCase()}:",
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.white30,
+                  fontWeight: FontWeight.w600,
+                   letterSpacing: 1,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  name.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 1,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 10),
         Text(
-          "Advance Booking: ₹${bookingData?["advance_booking"] ?? "0"}",
-          style: const TextStyle(color: Colors.white),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          "Payment Status: ${paymentStatus ?? "Not Paid"}",
-          style: TextStyle(
-            color: paymentStatus == "completed"
-                ? Colors.greenAccent
-                : Colors.redAccent,
-            fontWeight: FontWeight.bold,
+          phone,
+          style: const TextStyle(
+            fontSize: 13,
+            color: Colors.white70,
           ),
         ),
       ],
-    ),
-  );
-}
+    );
+  }
 
-  // ================= SUGGESTION =================
+  Widget _buildProjectInfoCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: _cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "PROJECT INFORMATION",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+               color: Colors.white70,
+              letterSpacing: 1
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: (bookingData?["features"] as List? ?? [])
+                .map(
+                  (feature) => Chip(
+                    backgroundColor: const Color(0xFF2CF0A0),
+                    label: Text(
+                      feature.toString(),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            "${bookingData?["cent"]} Cent (${bookingData?["sqft"]} Sq.Ft)",
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+               color: Colors.white70,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "${bookingData?["start_date"]} to ${bookingData?["end_date"]}",
+            style: const TextStyle(color: Colors.white70),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Site Address: ${bookingData?["address"]}",
+            style: const TextStyle(color: Colors.white70),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFinancialCard() {
+    final payment = bookingData?["payment"];
+    final paymentStatus = payment?["status"];
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: _cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Expected Budget: ₹${bookingData?["expected_amount"] ?? "0"}",
+            style: const TextStyle(color: Colors.white),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            "Advance Booking: ₹${bookingData?["advance_booking"] ?? "0"}",
+            style: const TextStyle(color: Colors.white),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            "Payment Status: ${paymentStatus ?? "Not Paid"}",
+            style: TextStyle(
+              color: paymentStatus == "completed"
+                  ? Colors.greenAccent
+                  : Colors.redAccent,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildSuggestionCard() {
     final suggestion = bookingData?["suggestion"];
 
-  if (suggestion == null || suggestion.toString().isEmpty) {
-    return const SizedBox(); // hide card if no suggestion
-  }
+    if (suggestion == null || suggestion.toString().isEmpty) {
+      return const SizedBox();
+    }
 
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    return Container(
+      width: double.infinity,
+      decoration: _cardDecoration(),
       child: Column(
         children: [
           ClipRRect(
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(16)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             child: Image.network(
               "$baseUrl${bookingData?["suggestion"]}",
               height: 180,
@@ -368,7 +432,10 @@ class _EngineerRequestDetailsPageState
             padding: EdgeInsets.all(12),
             child: Text(
               "Engineer Suggestion",
-              style: TextStyle(fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
             ),
           )
         ],
@@ -376,4 +443,3 @@ class _EngineerRequestDetailsPageState
     );
   }
 }
-      

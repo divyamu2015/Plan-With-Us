@@ -111,7 +111,8 @@ final propertyImage=work?["property_image"];
                 _buildFinancialCard(),
                 _buildFeatures(),
                 const SizedBox(height: 15),
-                Text('Work Proof'),
+                Text('WORK PROOF',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17.0),),
+                  const SizedBox(height: 10),
                 _buildImageSlider(images),
               ],
             ),
@@ -119,7 +120,7 @@ final propertyImage=work?["property_image"];
           _buildTopBar(),
         ],
       ),
-      bottomNavigationBar: _buildActionButtons(),
+   //   bottomNavigationBar: _buildActionButtons(),
     );
   }
 
@@ -172,29 +173,29 @@ Widget _buildImageSlider(List images) {
                 ),
 
                 /// ❌ Delete image button
-                Positioned(
-                  top: 16,
-                  right: 16,
-                  child: _circleActionIcon(Icons.close, () {
-                //    _deleteWorkProofImage(index);
-                  }),
-                ),
+                // Positioned(
+                //   top: 16,
+                //   right: 16,
+                //   child: _circleActionIcon(Icons.close, () {
+                // //    _deleteWorkProofImage(index);
+                //   }),
+                // ),
               ],
             );
           },
         ),
 
-        /// ➕ Add Image Button
-        Positioned(
-          bottom: 16,
-          right: 16,
-          child: FloatingActionButton(
-            mini: true,
-            backgroundColor: const Color(0xFFEEBD2B),
-            onPressed: _pickWorkProofImage,
-            child: const Icon(Icons.add),
-          ),
-        ),
+        // /// ➕ Add Image Button
+        // Positioned(
+        //   bottom: 16,
+        //   right: 16,
+        //   child: FloatingActionButton(
+        //     mini: true,
+        //     backgroundColor: const Color(0xFFEEBD2B),
+        //     onPressed: _pickWorkProofImage,
+        //     child: const Icon(Icons.add),
+        //   ),
+        // ),
       ],
     ),
   );
@@ -275,22 +276,22 @@ Future<void> updateWorkWithImage({
         /// 🔙 Back button already handled in top bar
 
         /// ✏ Edit Button
-        Positioned(
-          top: 50,
-          right: 60,
-          child: _circleActionIcon(Icons.edit, () {
-            _pickPropertyImage();
-          }),
-        ),
+        // Positioned(
+        //   top: 50,
+        //   right: 60,
+        //   child: _circleActionIcon(Icons.edit, () {
+        //     _pickPropertyImage();
+        //   }),
+        // ),
 
         /// ❌ Delete Button
-        Positioned(
-          top: 50,
-          right: 16,
-          child: _circleActionIcon(Icons.close, () {
-          //  _deletePropertyImage();
-          }),
-        ),
+        // Positioned(
+        //   top: 50,
+        //   right: 16,
+        //   child: _circleActionIcon(Icons.close, () {
+        //   //  _deletePropertyImage();
+        //   }),
+        // ),
       ],
     ),
   );

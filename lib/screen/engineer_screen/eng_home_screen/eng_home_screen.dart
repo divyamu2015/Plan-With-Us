@@ -31,6 +31,22 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
   Set<int> updatingIds = {};
   int? engineerId;
   int? bookingId;
+
+  // Elegant off-white theme
+  static const Color kPageBg = Color(0xFFF8F6F1);
+  static const Color kSurface = Color(0xFFFFFDFC);
+  static const Color kSurface2 = Color(0xFFF2EEE6);
+  static const Color kCardBorder = Color(0xFFE7E0D4);
+  static const Color kPrimary = Color(0xFF2F6B57);
+  static const Color kPrimaryDark = Color(0xFF234E40);
+  static const Color kAccent = Color(0xFF5FAF8D);
+  static const Color kText = Color(0xFF1F2937);
+  static const Color kSubText = Color(0xFF6B7280);
+  static const Color kDanger = Color(0xFFD9534F);
+  static const Color kDangerSoft = Color(0xFFFDECEC);
+  static const Color kSuccessSoft = Color(0xFFEAF7F0);
+  static const Color kGoldSoft = Color(0xFFB48A3C);
+
   @override
   void initState() {
     super.initState();
@@ -41,7 +57,6 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
     fetchBookings();
   }
 
-  // ---------------- FETCH BOOKINGS ----------------
   Future<void> fetchBookings() async {
     if (!mounted) return;
 
@@ -72,7 +87,6 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
     }
   }
 
-  // ---------------- STATUS HELPERS ----------------
   List<dynamic> get pending =>
       bookings.where((b) => b['status'] == 'pending').toList();
 
@@ -82,7 +96,6 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
   List<dynamic> get rejected =>
       bookings.where((b) => b['status'] == 'rejected').toList();
 
-  // ---------------- UPDATE STATUS ----------------
   Future<void> updateAccept(int bookingId, String amount) async {
     updatingIds.add(bookingId);
     if (mounted) setState(() {});
@@ -117,38 +130,12 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
 
     await fetchBookings();
 
-    if (!mounted) return; // 🔥 IMPORTANT
+    if (!mounted) return;
 
     updatingIds.remove(bookingId);
     setState(() {});
 
     _tabController.animateTo(2);
-  }
-
-  // ---------------- DIALOGS ----------------
-  Future<String?> _amountDialog() async {
-    final controller = TextEditingController();
-    return showDialog<String>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Advance Amount"),
-        content: TextField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(hintText: "Enter amount"),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: const Text("Submit"),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _drawerMenu() {
@@ -157,26 +144,50 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
       {'icon': Icons.work, 'title': 'Add Engineer Work'},
       {'icon': Icons.view_agenda_outlined, 'title': 'View Engineer Work'},
       {'icon': Icons.feedback_outlined, 'title': 'View Engineer Feedback'},
-
       {'icon': Icons.logout, 'title': 'Logout'},
     ];
 
     return Material(
-      color: Colors.deepPurple,
+      color: kPrimaryDark,
       child: Container(
-        padding: const EdgeInsets.only(top: 50, left: 20),
+        padding: const EdgeInsets.only(top: 56, left: 20, right: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: menuItems.map((item) {
-            return ListTile(
-              leading: Icon(item['icon'] as IconData, color: Colors.white),
-              title: Text(
-                item['title'] as String,
-                style: const TextStyle(color: Colors.white, fontSize: 18),
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(left: 10, bottom: 24),
+              child: Text(
+                "ENGINEER PANEL",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.4,
+                ),
               ),
-              onTap: () => _onMenuItemClick(item['title'] as String),
-            );
-          }).toList(),
+            ),
+            ...menuItems.map((item) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: ListTile(
+                  leading: Icon(item['icon'] as IconData, color: Colors.white),
+                  title: Text(
+                    item['title'].toString(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                    ),
+                  ),
+                  onTap: () => _onMenuItemClick(item['title'] as String),
+                ),
+              );
+            }),
+          ],
         ),
       ),
     );
@@ -218,14 +229,29 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+        backgroundColor: kSurface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+        title: const Text(
+          'Logout',
+          style: TextStyle(color: kText, fontWeight: FontWeight.w700),
+        ),
+        content: const Text(
+          'Are you sure you want to logout?',
+          style: TextStyle(color: kSubText),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: const Text('Cancel', style: TextStyle(color: kSubText)),
           ),
-          TextButton(
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: kPrimary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -234,7 +260,6 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
                   },
                 ),
               );
-              // Add your logout logic here
             },
             child: const Text('Logout'),
           ),
@@ -243,56 +268,15 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
     );
   }
 
-  Future<String?> _reasonDialog() async {
-    final controller = TextEditingController();
-    return showDialog<String>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Reject Reason"),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(hintText: "Reason"),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: const Text("Submit"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ---------------- UI ----------------
- @override
-Widget build(BuildContext context) {
-  return SliderDrawer(
-    key: _sliderKey,
-    slider: _drawerMenu(),
-    appBar: AppBar(
-      toolbarHeight: 0,
-      backgroundColor: const Color(0xFF081C15),
-      elevation: 0,
-    ),
-    child: Scaffold(
-      backgroundColor: const Color(0xFF081C15),
-      body: SafeArea(
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xFF061A14),
-                Color(0xFF08241C),
-                Color(0xFF0A2D22),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
+  @override
+  Widget build(BuildContext context) {
+    return SliderDrawer(
+      key: _sliderKey,
+      slider: _drawerMenu(),
+      appBar: AppBar(toolbarHeight: 0, backgroundColor: kPageBg, elevation: 0),
+      child: Scaffold(
+        backgroundColor: kPageBg,
+        body: SafeArea(
           child: Column(
             children: [
               _buildHeader(),
@@ -311,123 +295,45 @@ Widget build(BuildContext context) {
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget _buildLuxuryTabBar() {
-  return Container(
-    margin: const EdgeInsets.fromLTRB(22, 8, 22, 18),
-    padding: const EdgeInsets.all(6),
-    decoration: BoxDecoration(
-      color: const Color(0xFF103526).withOpacity(0.9),
-      borderRadius: BorderRadius.circular(32),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.18),
-          blurRadius: 20,
-          offset: const Offset(0, 10),
-        ),
-      ],
-    ),
-    child: TabBar(
-      controller: _tabController,
-      dividerColor: Colors.transparent,
-      indicatorSize: TabBarIndicatorSize.tab,
-      labelColor: Colors.black,
-      unselectedLabelColor: const Color(0xFF25F49D).withOpacity(0.72),
-      labelStyle: const TextStyle(
-        fontWeight: FontWeight.w700,
-        fontSize: 12,
-        letterSpacing: 1.2,
-      ),
-      unselectedLabelStyle: const TextStyle(
-        fontWeight: FontWeight.w700,
-        fontSize: 12,
-        letterSpacing: 1.2,
-      ),
-      indicator: BoxDecoration(
-        color: const Color(0xFF2CF0A0),
-        borderRadius: BorderRadius.circular(28),
+  Widget _buildLuxuryTabBar() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 6, 20, 16),
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: kSurface,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: kCardBorder),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2CF0A0).withOpacity(0.45),
-            blurRadius: 22,
-            spreadRadius: 1,
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
-      tabs: const [
-        Tab(text: "PENDING"),
-        Tab(text: "ACCEPTED"),
-        Tab(text: "REJECTED"),
-      ],
-    ),
-  );
-}
-
- Widget _buildHeader() {
-  return Padding(
-    padding: const EdgeInsets.fromLTRB(20, 18, 20, 12),
-    child: Row(
-      children: [
-        IconButton(
-          onPressed: () {
-            final sliderState = _sliderKey.currentState;
-            if (sliderState != null) {
-              if (sliderState.isDrawerOpen) {
-                sliderState.closeSlider();
-              } else {
-                sliderState.openSlider();
-              }
-            }
-          },
-          icon: const Icon(
-            Icons.menu,
-            color: Color(0xFF25F49D),
-            size: 30,
-          ),
-        ),
-        const Expanded(
-          child: Center(
-            child: Text(
-              "BOOKING DETAILS",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 4,
-                fontSize: 16,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 48),
-      ],
-    ),
-  );
-}
-  Widget _buildTabBar() {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F3D2E),
-        borderRadius: BorderRadius.circular(30),
-      ),
       child: TabBar(
         controller: _tabController,
-        indicator: BoxDecoration(
-          color: const Color(0xFF25F49D),
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: Color(0xFF25F49D).withOpacity(0.6),
-              blurRadius: 15,
-            ),
-          ],
+        dividerColor: Colors.transparent,
+        indicatorSize: TabBarIndicatorSize.tab,
+        labelColor: Colors.white,
+        unselectedLabelColor: kPrimary,
+        labelStyle: const TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 12,
+          letterSpacing: 1,
         ),
-        labelColor: Colors.black,
-        unselectedLabelColor: const Color(0xFF25F49D).withOpacity(0.6),
+        unselectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 12,
+          letterSpacing: 1,
+        ),
+        indicator: BoxDecoration(
+          color: kPrimary,
+          borderRadius: BorderRadius.circular(26),
+        ),
         tabs: const [
           Tab(text: "PENDING"),
           Tab(text: "ACCEPTED"),
@@ -437,460 +343,521 @@ Widget _buildLuxuryTabBar() {
     );
   }
 
-  Widget _buildTabViews() {
-  return TabBarView(
-    controller: _tabController,
-    children: [
-      _pendingTab(),
-
-      // ✅ ACCEPTED TAB
-      AcceptedBookingScreen(engineerId: engineerId!),
-
-      // ✅ REJECTED TAB
-      RejectedBookingScreen(engineerId: engineerId!),
-    ],
-  );
-}
-
-  // ---------------- TABS ----------------
-  Widget _pendingTab() {
-  if (isLoading) {
-    return const Center(child: CircularProgressIndicator(color: Color(0xFF25F49D)));
-  }
-  if (error != null) {
-    return Center(
-      child: Text(
-        error!,
-        style: const TextStyle(color: Colors.white),
-      ),
-    );
-  }
-  if (pending.isEmpty) {
-    return const Center(
-      child: Text(
-        "No pending bookings",
-        style: TextStyle(
-          color: Colors.white70,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-
-  return ListView.builder(
-    padding: const EdgeInsets.fromLTRB(22, 0, 22, 24),
-    itemCount: pending.length,
-    itemBuilder: (_, i) => _buildPendingLuxuryCard(pending[i]),
-  );
-}
-
-Widget _buildPendingLuxuryCard(dynamic data) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 22),
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(28),
-      gradient: LinearGradient(
-        colors: [
-          const Color(0xFF0D2C21).withOpacity(0.97),
-          const Color(0xFF0A241B).withOpacity(0.98),
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
+      child: Row(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: kSurface,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: kCardBorder),
+            ),
+            child: IconButton(
+              onPressed: () {
+                final sliderState = _sliderKey.currentState;
+                if (sliderState != null) {
+                  if (sliderState.isDrawerOpen) {
+                    sliderState.closeSlider();
+                  } else {
+                    sliderState.openSlider();
+                  }
+                }
+              },
+              icon: const Icon(Icons.menu, color: kPrimary, size: 28),
+            ),
+          ),
+          const Expanded(
+            child: Center(
+              child: Text(
+                "BOOKING DETAILS",
+                style: TextStyle(
+                  color: kText,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 2,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 48),
         ],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
       ),
-      border: Border.all(
-        color: Colors.white.withOpacity(0.10),
-        width: 1.2,
-      ),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.28),
-          blurRadius: 28,
-          offset: const Offset(0, 14),
+    );
+  }
+
+  Widget _pendingTab() {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator(color: kPrimary));
+    }
+    if (error != null) {
+      return Center(
+        child: Text(error!, style: const TextStyle(color: kText)),
+      );
+    }
+    if (pending.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 50,
+              child: Icon(Icons.close, color: Colors.red, size: 45),
+            ),
+            Text(
+              "No pending bookings",
+              style: TextStyle(color: kSubText, fontWeight: FontWeight.w600),
+            ),
+          ],
         ),
-        BoxShadow(
-          color: const Color(0xFF25F49D).withOpacity(0.06),
-          blurRadius: 40,
-          spreadRadius: 2,
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+      itemCount: pending.length,
+      itemBuilder: (_, i) => _buildPendingLuxuryCard(pending[i]),
+    );
+  }
+
+  Widget _buildPendingLuxuryCard(dynamic data) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 18),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(26),
+        color: kSurface,
+        border: Border.all(color: kCardBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _cardTopSection(
+            name: data['user_name']?.toString().toUpperCase() ?? '',
+            subtitle: (data['work_type'] ?? "PROJECT REQUEST").toString(),
+          ),
+          const SizedBox(height: 18),
+          Divider(color: kCardBorder, height: 1),
+          const SizedBox(height: 18),
+
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _detailBlock(
+                  icon: Icons.call_outlined,
+                  label: "PHONE",
+                  value: data['user_phone'],
+                ),
+              ),
+              const SizedBox(width: 18),
+              Expanded(
+                child: _detailBlock(
+                  icon: Icons.location_on_outlined,
+                  label: "ADDRESS",
+                  value: data['address'],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _detailBlock(
+                  icon: Icons.calendar_today_outlined,
+                  label: "START DATE",
+                  value: data['start_date'],
+                ),
+              ),
+              const SizedBox(width: 18),
+              Expanded(
+                child: _detailBlock(
+                  icon: Icons.event_busy_outlined,
+                  label: "END DATE",
+                  value: data['end_date'],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          _detailBlock(
+            icon: Icons.account_balance_wallet_outlined,
+            label: "EXPECTED AMOUNT",
+            value: "₹${data['expected_amount'] ?? '0'}",
+            isAmount: true,
+          ),
+
+          const SizedBox(height: 16),
+          _wideLuxuryRow("SQFT", data['sqft']),
+          _wideLuxuryRow("CENT", data['cent']),
+
+          if ((data['features'] as List?)?.isNotEmpty ?? false) ...[
+            const SizedBox(height: 18),
+            const Text(
+              "FEATURES",
+              style: TextStyle(
+                color: kSubText,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.1,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: (data['features'] as List)
+                  .map(
+                    (f) => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: kSurface2,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: kCardBorder),
+                      ),
+                      child: Text(
+                        f.toString(),
+                        style: const TextStyle(
+                          color: kText,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ],
+
+          if (data['suggestion'] != null &&
+              data['suggestion'].toString().isNotEmpty) ...[
+            const SizedBox(height: 18),
+            InkWell(
+              onTap: () => _openSuggestion(context, data['suggestion']),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF2F7FF),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFFD5E4FF)),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.picture_as_pdf_outlined,
+                      color: Colors.blueAccent,
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      "View Suggestion File",
+                      style: TextStyle(
+                        color: Colors.blueAccent,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 18),
+          Divider(color: kCardBorder, height: 1),
+          const SizedBox(height: 18),
+
+          updatingBookingIds.contains(data['id'])
+              ? const Center(child: CircularProgressIndicator(color: kPrimary))
+              : Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () async {
+                          await updateStatus(data['id'], 'rejected');
+                          _tabController.animateTo(2);
+                        },
+                        icon: const Icon(Icons.close, color: kDanger),
+                        label: const Text("REJECT"),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: kDanger,
+                          side: const BorderSide(color: kDanger),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          final amount = await _showAdvanceAmountDialog(
+                            context,
+                          );
+                          if (amount == null || amount.isEmpty) return;
+
+                          await updateAcceptStatus(
+                            data['id'],
+                            'accepted',
+                            amount,
+                          );
+                          _tabController.animateTo(1);
+                        },
+                        icon: const Icon(Icons.check, color: Colors.white),
+                        label: const Text("ACCEPT"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: kPrimary,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget _cardTopSection({required String name, required String subtitle}) {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: kText,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  height: 1.15,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                subtitle.toUpperCase(),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: kPrimary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.4,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        Container(
+          width: 62,
+          height: 62,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: kSurface2,
+            border: Border.all(color: kCardBorder),
+          ),
+          child: const Icon(Icons.person, color: kGoldSoft, size: 32),
         ),
       ],
-    ),
-    child: Column(
+    );
+  }
+
+  Widget _detailBlock({
+    required IconData icon,
+    required String label,
+    required dynamic value,
+    bool isAmount = false,
+  }) {
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _cardTopSection(
-          name: data['user_name']?.toString() ?? '',
-          subtitle: (data['work_type'] ?? "PROJECT REQUEST").toString(),
-        ),
-        const SizedBox(height: 18),
-        Container(
-          height: 1,
-          color: const Color(0xFF25F49D).withOpacity(0.18),
-        ),
-        const SizedBox(height: 20),
-
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: _detailBlock(
-                icon: Icons.call_outlined,
-                label: "PHONE",
-                value: data['user_phone'],
-              ),
-            ),
-            const SizedBox(width: 18),
-            Expanded(
-              child: _detailBlock(
-                icon: Icons.calendar_today_outlined,
-                label: "START DATE",
-                value: data['start_date'],
+            Icon(icon, size: 18, color: kPrimary),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                label,
+                style: const TextStyle(
+                  color: kSubText,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.1,
+                ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 22),
-
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: _detailBlock(
-                icon: Icons.event_busy_outlined,
-                label: "END DATE",
-                value: data['end_date'],
-              ),
-            ),
-            const SizedBox(width: 18),
-            Expanded(
-              child: _detailBlock(
-                icon: Icons.square_foot_outlined,
-                label: "SQFT",
-                value: data['sqft'],
-              ),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 22),
-
-        _detailBlock(
-          icon: Icons.account_balance_wallet_outlined,
-          label: "EXPECTED AMOUNT",
-          value: "₹${data['expected_amount'] ?? '0'}",
-          isAmount: true,
-        ),
-
-        const SizedBox(height: 18),
-        _wideLuxuryRow("ADDRESS", data['address']),
-        _wideLuxuryRow("CENT", data['cent']),
-
-        if ((data['features'] as List?)?.isNotEmpty ?? false) ...[
-          const SizedBox(height: 18),
-          const Text(
-            "FEATURES",
-            style: TextStyle(
-              color: Colors.white54,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
-            ),
+        const SizedBox(height: 8),
+        Text(
+          value?.toString() ?? 'N/A',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: isAmount ? kPrimary : kText,
+            fontSize: isAmount ? 18 : 15,
+            fontWeight: FontWeight.w800,
+            height: 1.2,
           ),
-          const SizedBox(height: 10),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: (data['features'] as List)
-                .map(
-                  (f) => Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.06),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white.withOpacity(0.08)),
-                    ),
-                    child: Text(
-                      f.toString(),
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                )
-                .toList(),
-          ),
-        ],
-
-        if (data['suggestion'] != null &&
-            data['suggestion'].toString().isNotEmpty) ...[
-          const SizedBox(height: 18),
-          InkWell(
-            onTap: () => _openSuggestion(context, data['suggestion']),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withOpacity(0.08)),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.picture_as_pdf_outlined, color: Colors.blueAccent),
-                  SizedBox(width: 8),
-                  Text(
-                    "View Suggestion File",
-                    style: TextStyle(
-                      color: Colors.blueAccent,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-
-        const SizedBox(height: 18),
-        Container(
-          height: 1,
-          color: const Color(0xFF25F49D).withOpacity(0.18),
         ),
-        const SizedBox(height: 18),
-
-        updatingBookingIds.contains(data['id'])
-            ? const Center(
-                child: CircularProgressIndicator(color: Color(0xFF25F49D)),
-              )
-            : Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () async {
-                        await updateStatus(data['id'], 'rejected');
-                        _tabController.animateTo(2);
-                      },
-                      icon: const Icon(Icons.close, color: Color(0xFFFF5A5A)),
-                      label: const Text("REJECT"),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFFFF5A5A),
-                        side: BorderSide(
-                          color: const Color(0xFFFF5A5A).withOpacity(0.35),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(22),
-                        ),
-                        textStyle: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.1,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () async {
-                        final amount = await _showAdvanceAmountDialog(context);
-                        if (amount == null || amount.isEmpty) return;
-
-                        await updateAcceptStatus(data['id'], 'accepted', amount);
-                        _tabController.animateTo(1);
-                      },
-                      icon: const Icon(Icons.check, color: Colors.black),
-                      label: const Text("ACCEPT"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2CF0A0),
-                        foregroundColor: Colors.black,
-                        elevation: 0,
-                        shadowColor: const Color(0xFF2CF0A0),
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(22),
-                        ),
-                        textStyle: const TextStyle(
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1.1,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
       ],
-    ),
-  );
-}
+    );
+  }
 
-Widget _cardTopSection({
-  required String name,
-  required String subtitle,
-}) {
-  return Row(
-    children: [
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              name,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-                height: 1.15,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              subtitle.toUpperCase(),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Color(0xFF2CF0A0),
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 2,
-              ),
-            ),
-          ],
-        ),
-      ),
-      const SizedBox(width: 12),
-      Container(
-        width: 66,
-        height: 66,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: const Color(0xFF1A4C3A),
-          border: Border.all(color: const Color(0xFF2CF0A0).withOpacity(0.35)),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF2CF0A0).withOpacity(0.10),
-              blurRadius: 18,
-              spreadRadius: 1,
-            ),
-          ],
-        ),
-        child: const Icon(
-          Icons.person,
-          color: Color(0xFFE6E6E6),
-          size: 34,
-        ),
-      ),
-    ],
-  );
-}
-
-Widget _detailBlock({
-  required IconData icon,
-  required String label,
-  required dynamic value,
-  bool isAmount = false,
-}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Row(
+  Widget _wideLuxuryRow(String label, dynamic value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 20, color: const Color(0xFF9FB0A8)),
-          const SizedBox(width: 8),
-          Flexible(
+          SizedBox(
+            width: 92,
             child: Text(
               label,
               style: const TextStyle(
-                color: Color(0xFF8FA19A),
+                color: kSubText,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                letterSpacing: 1.2,
+                letterSpacing: 1.1,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value?.toString() ?? 'N/A',
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                color: kText,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),
         ],
       ),
-      const SizedBox(height: 8),
-      Text(
-        value?.toString() ?? 'N/A',
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: isAmount ? const Color(0xFF2CF0A0) : Colors.white,
-          fontSize: isAmount ? 18 : 15,
-          fontWeight: FontWeight.w800,
-          height: 1.2,
-        ),
-      ),
-    ],
-  );
-}
-
-Widget _wideLuxuryRow(String label, dynamic value) {
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 12),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 92,
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Color(0xFF8FA19A),
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
-            ),
-          ),
-        ),
-        Expanded(
-          child: Text(
-            value?.toString() ?? 'N/A',
-            textAlign: TextAlign.right,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
-}
+    );
+  }
 
   Future<String?> _showAdvanceAmountDialog(BuildContext context) async {
     String? amount;
 
     return await showDialog<String>(
       context: context,
+      barrierColor: Colors.black.withOpacity(0.18),
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Enter Advance Amount'),
-          content: TextField(
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              hintText: 'Enter advance booking amount',
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              color: kSurface,
+              border: Border.all(color: kCardBorder),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 26,
+                  offset: const Offset(0, 14),
+                ),
+              ],
             ),
-            onChanged: (value) {
-              amount = value;
-            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Enter Advance Amount',
+                  style: TextStyle(
+                    color: kText,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(color: kText),
+                  decoration: InputDecoration(
+                    hintText: 'Enter advance booking amount',
+                    hintStyle: const TextStyle(color: kSubText),
+                    filled: true,
+                    fillColor: kPageBg,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: kCardBorder),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: kPrimary),
+                    ),
+                  ),
+                  onChanged: (value) {
+                    amount = value;
+                  },
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, null),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: kSubText),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kPrimary,
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: () => Navigator.pop(context, amount),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, null),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context, amount),
-              child: const Text('OK'),
-            ),
-          ],
         );
       },
     );
@@ -928,11 +895,30 @@ Widget _wideLuxuryRow(String label, dynamic value) {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Enter Reason'),
+          backgroundColor: kSurface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(22),
+          ),
+          title: const Text(
+            'Enter Reason',
+            style: TextStyle(color: kText, fontWeight: FontWeight.w700),
+          ),
           content: TextField(
             autofocus: true,
-            decoration: const InputDecoration(
+            style: const TextStyle(color: kText),
+            decoration: InputDecoration(
               hintText: 'Enter reason for rejection',
+              hintStyle: const TextStyle(color: kSubText),
+              filled: true,
+              fillColor: kPageBg,
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(color: kCardBorder),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(color: kPrimary),
+              ),
             ),
             onChanged: (value) {
               reason = value;
@@ -941,9 +927,13 @@ Widget _wideLuxuryRow(String label, dynamic value) {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, null),
-              child: const Text('Cancel'),
+              child: const Text('Cancel', style: TextStyle(color: kSubText)),
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kPrimary,
+                foregroundColor: Colors.white,
+              ),
               onPressed: () => Navigator.pop(context, reason),
               child: const Text('OK'),
             ),
@@ -958,7 +948,6 @@ Widget _wideLuxuryRow(String label, dynamic value) {
     if (status == 'rejected') {
       reason = await _showReasonDialog(context);
       if (reason == null || reason.isEmpty) {
-        // If user cancels or enters no reason, do nothing
         return;
       }
     }
@@ -1042,244 +1031,6 @@ Widget _wideLuxuryRow(String label, dynamic value) {
     });
   }
 
-  // ---------------- CARDS ----------------
-  Widget _buildBookingCard(dynamic data) {
-    final features = (data['features'] as List?)?.cast<String>() ?? [];
-
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      margin: const EdgeInsets.only(bottom: 20),
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildInfoRow(Icons.person, "Customer Name", data['user_name']),
-            _buildInfoRow(Icons.phone, "Phone", data['user_phone']),
-            _buildInfoRow(Icons.location_on, "Address", data['address']),
-            _buildInfoRow(
-              Icons.calendar_today,
-              "Start Date",
-              data['start_date'],
-            ),
-            _buildInfoRow(Icons.event, "End Date", data['end_date']),
-            _buildInfoRow(Icons.landscape, "Cent", data['cent']),
-            _buildInfoRow(Icons.square_foot, "Sqft", data['sqft']),
-            _buildInfoRow(
-              Icons.monetization_on,
-              "Expected Amount",
-              "₹ ${data['expected_amount']}",
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "Features",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: features.isNotEmpty
-                  ? features
-                        .map(
-                          (f) => Chip(
-                            label: Text(f),
-                            backgroundColor: const Color(0xFFEAF2FF),
-                            labelStyle: const TextStyle(color: Colors.black87),
-                          ),
-                        )
-                        .toList()
-                  : [
-                      const Text(
-                        "No features listed",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ],
-            ),
-            const SizedBox(height: 20),
-            if (data['suggestion'] != null &&
-                data['suggestion'].toString().isNotEmpty)
-              GestureDetector(
-                onTap: () {
-                  _openSuggestion(context, data['suggestion']);
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF0F3D2E), Color(0xFF0B2E23)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white.withOpacity(0.1)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.6),
-                        blurRadius: 20,
-                        offset: Offset(0, 10),
-                      ),
-                    ],
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.picture_as_pdf, color: Colors.blueAccent),
-                      SizedBox(width: 8),
-                      Text(
-                        "View Suggestion File",
-                        style: TextStyle(
-                          color: Colors.blueAccent,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            const SizedBox(height: 20),
-            updatingBookingIds.contains(data['id'])
-                ? const Center(child: CircularProgressIndicator())
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () async {
-                          final amount = await _showAdvanceAmountDialog(
-                            context,
-                          );
-                          if (amount == null || amount.isEmpty) return;
-
-                          await updateAcceptStatus(
-                            data['id'],
-                            'accepted',
-                            amount,
-                          );
-                          _tabController.animateTo(1);
-                          // Navigator.pushReplacement(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (_) => BookingStatusTabScreen(
-                          //       engineerId: engineerId!,
-                          //       initialIndex: 1,
-                          //     ),
-                          //   ),
-                          // );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF25F49D),
-                          foregroundColor: Colors.black,
-                          elevation: 10,
-                          shadowColor: Color(0xFF25F49D),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        child: const Text('Accept'),
-                      ),
-
-                      ElevatedButton(
-                        onPressed: () async {
-                          await updateStatus(data['id'], 'rejected');
-                          _tabController.animateTo(2);
-                          // Navigator.pushReplacement(
-                          //   // ignore: use_build_context_synchronously
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (_) => BookingStatusTabScreen(
-                          //       engineerId: engineerId!,
-                          //       initialIndex: 2, // Rejected tab
-                          //     ),
-                          //   ),
-                          // );
-                        },
-                      style: OutlinedButton.styleFrom(
-  side: BorderSide(color: Colors.red.withOpacity(0.5)),
-  foregroundColor: Colors.red,
-  shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(30),
-  ),
-),
-                        child: const Text('Reject'),
-                      ),
-                    ],
-                  ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(IconData icon, String title, dynamic value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: Colors.blueGrey, size: 20),
-          const SizedBox(width: 10),
-          Expanded(
-            child: RichText(
-              text: TextSpan(
-                text: "$title: ",
-                style: const TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15,
-                ),
-                children: [
-                  TextSpan(
-                    text: value?.toString() ?? 'N/A',
-                    style: const TextStyle(
-                      color: Colors.black54,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // const SizedBox(height: 20),
-          // if (isUpdatingStatus) const Center(child: CircularProgressIndicator())
-          // else
-          //   Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //     children: [
-          //       ElevatedButton(
-          //         onPressed: () async {
-          //           if (bookingId != null) {
-          //             await updateStatus(bookingId!, 'accepted');
-          //           }
-          //         },
-          //         style:
-          //             ElevatedButton.styleFrom(backgroundColor: Colors.green),
-          //         child: const Text('Accept'),
-          //       ),
-          //       ElevatedButton(
-          //         onPressed: () async {
-          //           if (bookingId != null) {
-          //             await updateStatus(bookingId!, 'rejected');
-          //           }
-          //         },
-          //         style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          //         child: const Text('Reject'),
-          //       ),
-          //     ],
-          //   ),
-        ],
-      ),
-    );
-  }
-
   void _openSuggestion(BuildContext context, String path) {
     final fullUrl = 'https://417sptdw-8001.inc1.devtunnels.ms$path';
     ScaffoldMessenger.of(context).showSnackBar(
@@ -1288,12 +1039,8 @@ Widget _wideLuxuryRow(String label, dynamic value) {
         backgroundColor: Colors.blueAccent,
       ),
     );
-    // You can integrate url_launcher here later:
-    // launchUrl(Uri.parse(fullUrl));
   }
 }
-
-// ---------------- DRAWER ----------------
 
 class AcceptedBookingScreen extends StatefulWidget {
   final int engineerId;
@@ -1308,6 +1055,15 @@ class _AcceptedBookingScreenState extends State<AcceptedBookingScreen> {
   bool isLoading = true;
   String? error;
   List<dynamic> bookings = [];
+
+  static const Color kPageBg = Color(0xFFF8F6F1);
+  static const Color kSurface = Color(0xFFFFFDFC);
+  static const Color kCardBorder = Color(0xFFE7E0D4);
+  static const Color kPrimary = Color(0xFF2F6B57);
+  static const Color kText = Color(0xFF1F2937);
+  static const Color kSubText = Color(0xFF6B7280);
+  static const Color kSuccess = Color(0xFF3FA66B);
+  static const Color kDanger = Color(0xFFD9534F);
 
   @override
   void initState() {
@@ -1331,33 +1087,49 @@ class _AcceptedBookingScreenState extends State<AcceptedBookingScreen> {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: const Text("Payment Details"),
+              backgroundColor: kSurface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(22),
+              ),
+              title: const Text(
+                "Payment Details",
+                style: TextStyle(color: kText, fontWeight: FontWeight.w700),
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Customer: ${data['user_name']}"),
+                  Text(
+                    "Customer: ${data['user_name']}",
+                    style: const TextStyle(color: kText),
+                  ),
                   const SizedBox(height: 8),
-                  Text("Payment Type: ${payment['payment_type']}"),
+                  Text(
+                    "Payment Type: ${payment['payment_type']}",
+                    style: const TextStyle(color: kText),
+                  ),
                   Text(
                     "Payment Status: ${payment['status']}",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: payment['status'] == 'completed'
-                          ? Colors.green
-                          : Colors.red,
+                          ? kSuccess
+                          : kDanger,
                     ),
                   ),
-                  Text("Amount: ₹${payment['total_amount']}"),
+                  Text(
+                    "Amount: ₹${payment['total_amount']}",
+                    style: const TextStyle(color: kText),
+                  ),
                   const SizedBox(height: 20),
-
                   ElevatedButton(
                     onPressed: () async {
                       Navigator.pop(context);
                       await _markWorkCompleted(bookingId);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: kPrimary,
+                      foregroundColor: Colors.white,
                     ),
                     child: const Text("Work Completed"),
                   ),
@@ -1385,7 +1157,7 @@ class _AcceptedBookingScreenState extends State<AcceptedBookingScreen> {
         final decoded = jsonDecode(response.body);
 
         setState(() {
-          bookings = decoded['data']; // 🔥 IMPORTANT
+          bookings = decoded['data'];
           isLoading = false;
         });
       } else {
@@ -1418,7 +1190,7 @@ class _AcceptedBookingScreenState extends State<AcceptedBookingScreen> {
           const SnackBar(content: Text("Work marked as Completed")),
         );
 
-        await fetchAcceptedBookings(); // refresh list
+        await fetchAcceptedBookings();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Failed: ${response.statusCode}")),
@@ -1431,184 +1203,168 @@ class _AcceptedBookingScreenState extends State<AcceptedBookingScreen> {
     }
   }
 
- @override
-Widget build(BuildContext context) {
-  if (isLoading) {
-    return const Center(
-      child: CircularProgressIndicator(color: Color(0xFF25F49D)),
-    );
-  }
+  @override
+  Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator(color: kPrimary));
+    }
 
-  if (error != null) {
-    return Center(
-      child: Text(
-        error!,
-        style: const TextStyle(color: Colors.white),
-      ),
-    );
-  }
+    if (error != null) {
+      return Center(
+        child: Text(error!, style: const TextStyle(color: kText)),
+      );
+    }
 
-  if (bookings.isEmpty) {
-    return const Center(
-      child: Text(
-        "No Accepted bookings",
-        style: TextStyle(
-          color: Colors.white70,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-
-  return ListView.builder(
-    padding: const EdgeInsets.fromLTRB(22, 0, 22, 24),
-    itemCount: bookings.length,
-    itemBuilder: (context, index) {
-      final data = bookings[index];
-      final paymentStatus = data['payment']?['status'];
-      return _acceptedLuxuryCard(context, data, paymentStatus);
-    },
-  );
-}
-Widget _acceptedLuxuryCard(BuildContext context, dynamic data, dynamic paymentStatus) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 22),
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(28),
-      gradient: LinearGradient(
-        colors: [
-          const Color(0xFF0D2C21).withOpacity(0.97),
-          const Color(0xFF0A241B).withOpacity(0.98),
-        ],
-      ),
-      border: Border.all(color: Colors.white.withOpacity(0.10), width: 1.2),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.28),
-          blurRadius: 28,
-          offset: const Offset(0, 14),
-        ),
-      ],
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+    if (bookings.isEmpty) {
+      return const Center(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: Text(
-                (data['user_name'] ?? '').toString(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
+            CircleAvatar(
+              radius: 50,
+              child: Icon(Icons.close, color: Colors.red, size: 45),
             ),
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFF1A4C3A),
-                border: Border.all(
-                  color: const Color(0xFF2CF0A0).withOpacity(0.35),
-                ),
-              ),
-              child: const Icon(Icons.person, color: Colors.white70),
+            Text(
+              "No Accepted bookings",
+              style: TextStyle(color: kSubText, fontWeight: FontWeight.w600),
             ),
           ],
         ),
-        const SizedBox(height: 18),
-        Container(height: 1, color: const Color(0xFF25F49D).withOpacity(0.18)),
-        const SizedBox(height: 18),
+      );
+    }
 
-        _acceptedRow("PHONE", data['user_phone']),
-        _acceptedRow("ADDRESS", data['address']),
-        _acceptedRow("START DATE", data['start_date']),
-        _acceptedRow("END DATE", data['end_date']),
-        _acceptedRow("CENT", data['cent']),
-        _acceptedRow("SQFT", data['sqft']),
-        _acceptedRow("EXPECTED AMOUNT", "₹${data['expected_amount']}"),
-        _acceptedRow(
-          "ADVANCE PAID",
-          "₹${data['advance_booking']}",
-          valueColor: const Color(0xFF59D36B),
-        ),
-        _acceptedRow(
-          "PAYMENT STATUS",
-          "${paymentStatus ?? "Not Paid"}",
-          valueColor: paymentStatus == "completed"
-              ? const Color(0xFF59D36B)
-              : const Color(0xFFFF6B6B),
-        ),
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+      itemCount: bookings.length,
+      itemBuilder: (context, index) {
+        final data = bookings[index];
+        final paymentStatus = data['payment']?['status'];
+        return _acceptedLuxuryCard(context, data, paymentStatus);
+      },
+    );
+  }
 
-        const SizedBox(height: 18),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      EngineerRequestDetailsPage(bookingId: data['id']),
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2CF0A0),
-              foregroundColor: Colors.black,
-              padding: const EdgeInsets.symmetric(vertical: 17),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              textStyle: const TextStyle(
+  Widget _acceptedLuxuryCard(
+    BuildContext context,
+    dynamic data,
+    dynamic paymentStatus,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 18),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(26),
+        color: kSurface,
+        border: Border.all(color: kCardBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: Text(
+              (data['user_name'] ?? '').toString().toUpperCase(),
+              style: const TextStyle(
+                color: kText,
+                fontSize: 22,
                 fontWeight: FontWeight.w800,
-                letterSpacing: 1,
               ),
             ),
-            child: const Text("UPDATE WORK RESULT"),
           ),
-        ),
-      ],
-    ),
-  );
-}
+          const SizedBox(height: 18),
+          Divider(color: kCardBorder, height: 1),
+          const SizedBox(height: 18),
 
-Widget _acceptedRow(String label, dynamic value, {Color? valueColor}) {
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 12),
-    child: Row(
-      children: [
-        SizedBox(
-          width: 130,
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Color(0xFF8FA19A),
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
+          _acceptedRow("PHONE", data['user_phone']),
+          _acceptedRow("ADDRESS", data['address']),
+          _acceptedRow("START DATE", data['start_date']),
+          _acceptedRow("END DATE", data['end_date']),
+          _acceptedRow("CENT", data['cent']),
+          _acceptedRow("SQFT", data['sqft']),
+          _acceptedRow("EXPECTED AMOUNT", "₹${data['expected_amount']}"),
+          _acceptedRow(
+            "ADVANCE PAID",
+            "₹${data['advance_booking']}",
+            valueColor: kSuccess,
+          ),
+          _acceptedRow(
+            "PAYMENT STATUS",
+            "${paymentStatus ?? "Not Paid"}",
+            valueColor: paymentStatus == "completed" ? kSuccess : kDanger,
+          ),
+
+          const SizedBox(height: 18),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        EngineerRequestDetailsPage(bookingId: data['id']),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kPrimary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                textStyle: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1,
+                ),
+              ),
+              child: const Text("UPDATE WORK RESULT"),
             ),
           ),
-        ),
-        Expanded(
-          child: Text(
-            value?.toString() ?? 'N/A',
-            textAlign: TextAlign.right,
-            style: TextStyle(
-              color: valueColor ?? Colors.white,
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
+        ],
+      ),
+    );
+  }
+
+  Widget _acceptedRow(String label, dynamic value, {Color? valueColor}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 130,
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: kSubText,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.1,
+              ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+          Expanded(
+            child: Text(
+              value?.toString() ?? 'N/A',
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                color: valueColor ?? kText,
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class RejectedBookingScreen extends StatefulWidget {
@@ -1624,6 +1380,14 @@ class _RejectedBookingScreenState extends State<RejectedBookingScreen> {
   bool isLoading = true;
   String? error;
   List<dynamic> bookings = [];
+
+  static const Color kSurface = Color(0xFFFFFDFC);
+  static const Color kCardBorder = Color(0xFFE7E0D4);
+  static const Color kText = Color(0xFF1F2937);
+  static const Color kSubText = Color(0xFF6B7280);
+  static const Color kDanger = Color(0xFFD9534F);
+  static const Color kDangerSoft = Color(0xFFFDECEC);
+  static const Color kPrimary = Color(0xFF2F6B57);
 
   @override
   void initState() {
@@ -1642,7 +1406,7 @@ class _RejectedBookingScreenState extends State<RejectedBookingScreen> {
         final decoded = jsonDecode(response.body);
 
         setState(() {
-          bookings = decoded['data']; // 🔥 IMPORTANT
+          bookings = decoded['data'];
           isLoading = false;
         });
       } else {
@@ -1659,147 +1423,145 @@ class _RejectedBookingScreenState extends State<RejectedBookingScreen> {
     }
   }
 
- @override
-Widget build(BuildContext context) {
-  if (isLoading) {
-    return const Center(
-      child: CircularProgressIndicator(color: Color(0xFF25F49D)),
-    );
-  }
+  @override
+  Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator(color: kPrimary));
+    }
 
-  if (error != null) {
-    return Center(
-      child: Text(
-        error!,
-        style: const TextStyle(color: Colors.white),
-      ),
-    );
-  }
+    if (error != null) {
+      return Center(
+        child: Text(error!, style: const TextStyle(color: kText)),
+      );
+    }
 
-  if (bookings.isEmpty) {
-    return const Center(
-      child: Text(
-        "No Rejected bookings",
-        style: TextStyle(
-          color: Colors.white70,
-          fontWeight: FontWeight.w600,
+    if (bookings.isEmpty) {
+      return const Center(
+        child: Column(
+           mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 50,
+              child: Icon(Icons.close, color: Colors.red, size: 45),
+            ),
+            Text(
+              "No Rejected bookings",
+              style: TextStyle(color: kSubText, fontWeight: FontWeight.w600),
+            ),
+          ],
         ),
-      ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+      itemCount: bookings.length,
+      itemBuilder: (context, index) {
+        final data = bookings[index];
+        return _rejectedLuxuryCard(data);
+      },
     );
   }
 
-  return ListView.builder(
-    padding: const EdgeInsets.fromLTRB(22, 0, 22, 24),
-    itemCount: bookings.length,
-    itemBuilder: (context, index) {
-      final data = bookings[index];
-      return _rejectedLuxuryCard(data);
-    },
-  );
-}
-Widget _rejectedLuxuryCard(dynamic data) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 22),
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(28),
-      gradient: LinearGradient(
-        colors: [
-          const Color(0xFF0D2C21).withOpacity(0.97),
-          const Color(0xFF0A241B).withOpacity(0.98),
+  Widget _rejectedLuxuryCard(dynamic data) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 18),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(26),
+        color: kSurface,
+        border: Border.all(color: kCardBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
         ],
       ),
-      border: Border.all(color: Colors.white.withOpacity(0.10), width: 1.2),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.28),
-          blurRadius: 28,
-          offset: const Offset(0, 14),
-        ),
-      ],
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          (data['user_name'] ?? '').toString(),
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        const SizedBox(height: 18),
-        Container(height: 1, color: const Color(0xFF25F49D).withOpacity(0.18)),
-        const SizedBox(height: 18),
-
-        _rejectedRow("PHONE", data['user_phone']),
-        _rejectedRow("ADDRESS", data['address']),
-        _rejectedRow("START DATE", data['start_date']),
-        _rejectedRow("END DATE", data['end_date']),
-        _rejectedRow(
-          "REJECT REASON",
-          data['reject_reason'],
-          valueColor: const Color(0xFFFF6B6B),
-        ),
-
-        const SizedBox(height: 16),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFF5A5A).withOpacity(0.14),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: const Color(0xFFFF5A5A).withOpacity(0.30),
-            ),
-          ),
-          child: const Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Align(
+            alignment: Alignment.center,
             child: Text(
-              "REJECTED",
-              style: TextStyle(
-                color: Color(0xFFFF6B6B),
+              (data['user_name'] ?? '').toString().toUpperCase(),
+              style: const TextStyle(
+                color: kText,
+                fontSize: 22,
                 fontWeight: FontWeight.w800,
-                letterSpacing: 1.2,
               ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+          const SizedBox(height: 18),
+          Divider(color: kCardBorder, height: 1),
+          const SizedBox(height: 18),
 
-Widget _rejectedRow(String label, dynamic value, {Color? valueColor}) {
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 12),
-    child: Row(
-      children: [
-        SizedBox(
-          width: 120,
-          child: Text( 
-            label,
-            style: const TextStyle(
-              color: Color(0xFF8FA19A),
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
+          _rejectedRow("PHONE", data['user_phone']),
+          _rejectedRow("ADDRESS", data['address']),
+          _rejectedRow("START DATE", data['start_date']),
+          _rejectedRow("END DATE", data['end_date']),
+          _rejectedRow(
+            "REJECT REASON",
+            data['reject_reason'],
+            valueColor: kDanger,
+          ),
+
+          const SizedBox(height: 16),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            decoration: BoxDecoration(
+              color: kDangerSoft,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: const Color(0xFFF5C9C8)),
+            ),
+            child: const Center(
+              child: Text(
+                "REJECTED",
+                style: TextStyle(
+                  color: kDanger,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.2,
+                ),
+              ),
             ),
           ),
-        ),
-        Expanded(
-          child: Text(
-            value?.toString() ?? 'N/A',
-            textAlign: TextAlign.right,
-            style: TextStyle(
-              color: valueColor ?? Colors.white,
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
+        ],
+      ),
+    );
+  }
+
+  Widget _rejectedRow(String label, dynamic value, {Color? valueColor}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: kSubText,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.1,
+              ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+          Expanded(
+            child: Text(
+              value?.toString() ?? 'N/A',
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                color: valueColor ?? kText,
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

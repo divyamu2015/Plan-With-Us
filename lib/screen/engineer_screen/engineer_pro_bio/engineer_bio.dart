@@ -21,12 +21,6 @@ class _EngineerBioState extends State<EngineerBio> {
   int? engineerId;
 
   bool _showAmountDetails = false;
-  // final List<Feature> _features = [
-  //   Feature(name: 'Swimming Pool', icon: Icons.pool),
-  //   Feature(name: 'Pooja Room', icon: Icons.temple_hindu),
-  //   Feature(name: 'Garden', icon: Icons.yard),
-  //   Feature(name: 'Gym', icon: Icons.fitness_center),
-  // ];
 
   final List<House> _houses = [];
   List<Map<String, dynamic>> categoryItems = [];
@@ -46,6 +40,20 @@ class _EngineerBioState extends State<EngineerBio> {
   final TextEditingController timeDurationController = TextEditingController();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   bool isLoading = false;
+
+  // White elegant UI colors
+  static const Color kPageBg = Color(0xFFF8FAFC);
+  static const Color kCard = Colors.white;
+  static const Color kCardSoft = Color(0xFFFDFDFD);
+  static const Color kField = Colors.white;
+  static const Color kBorder = Color(0xFFE2E8F0);
+  static const Color kAccent = Color(0xFF19C37D);
+  static const Color kAccentDark = Color(0xFF159A64);
+  static const Color kText = Color(0xFF0F172A);
+  static const Color kSubText = Color(0xFF475569);
+  static const Color kHint = Color(0xFF94A3B8);
+  static const Color kDanger = Color(0xFFE96A6A);
+
   Future<void> _pickImage(ImageSource source) async {
     try {
       final pickedFile = await picker.pickImage(
@@ -64,27 +72,35 @@ class _EngineerBioState extends State<EngineerBio> {
 
   void showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(
+        content: Text(message),
+        backgroundColor: kDanger,
+        behavior: SnackBarBehavior.floating,
+      ),
     );
   }
 
   void _showImageSourceSelection() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (context) => SafeArea(
         child: Wrap(
           children: [
             ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Gallery'),
+              leading: const Icon(Icons.photo_library, color: kAccent),
+              title: const Text('Gallery', style: TextStyle(color: kText)),
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(ImageSource.gallery);
               },
             ),
             ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('Camera'),
+              leading: const Icon(Icons.camera_alt, color: kAccent),
+              title: const Text('Camera', style: TextStyle(color: kText)),
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(ImageSource.camera);
@@ -102,26 +118,61 @@ class _EngineerBioState extends State<EngineerBio> {
     return Center(
       child: GestureDetector(
         onTap: _showImageSourceSelection,
-        child: Container(
-          width: w * 0.5, // size of container
-          height: h * 0.2,
-          decoration: BoxDecoration(
-            color: Colors.blueGrey[100],
-            borderRadius: BorderRadius.circular(15), // Rounded corners
-            border: Border.all(
-              color: const Color.fromARGB(255, 68, 68, 68),
-              width: 1,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              width: w * 0.38,
+              height: h * 0.17,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(
+                  color: kAccent.withOpacity(0.35),
+                  width: 1.3,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.06),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+                image: _profileImage != null
+                    ? DecorationImage(
+                        image: FileImage(File(_profileImage!.path)),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
+              child: _profileImage == null
+                  ? const Icon(Icons.camera_alt, size: 42, color: kSubText)
+                  : null,
             ),
-            image: _profileImage != null
-                ? DecorationImage(
-                    image: FileImage(File(_profileImage!.path)),
-                    fit: BoxFit.cover,
-                  )
-                : null,
-          ),
-          child: _profileImage == null
-              ? const Icon(Icons.camera_alt, size: 40, color: Colors.white70)
-              : null,
+            Positioned(
+              right: -8,
+              bottom: -8,
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: kAccent,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 3),
+                  boxShadow: [
+                    BoxShadow(
+                      color: kAccent.withOpacity(0.25),
+                      blurRadius: 12,
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.edit,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -156,28 +207,25 @@ class _EngineerBioState extends State<EngineerBio> {
     });
   }
 
-  final List<Feature> _features = []; // initially empty
+  final List<Feature> _features = [];
 
   Future<void> _getAdditionalFeat() async {
     try {
       var response = await http.get(Uri.parse(Urlss.getAdditionalfeturi));
-
-      //print("Response Code: ${response.statusCode}");
-      // print("Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
 
         if (data is List) {
           setState(() {
-            _features.clear(); // remove old data
+            _features.clear();
             for (var item in data) {
               final name = item['name'] ?? '';
 
               _features.add(
                 Feature(
-                  name: name, // comes from backend
-                  icon: _getIconForFeature(name), // hardcoded icon mapping
+                  name: name,
+                  icon: _getIconForFeature(name),
                 ),
               );
             }
@@ -191,7 +239,6 @@ class _EngineerBioState extends State<EngineerBio> {
     }
   }
 
-  // Map backend name to icons
   IconData _getIconForFeature(String name) {
     switch (name.toLowerCase()) {
       case 'swimming pool':
@@ -214,18 +261,14 @@ class _EngineerBioState extends State<EngineerBio> {
       case 'well':
         return Icons.water;
       default:
-        return Icons.home; // fallback icon
+        return Icons.home;
     }
   }
 
   Future<void> fetchCategoryItems() async {
-    //print(123);
     final response = await http.get(Uri.parse(Urlss.propertyItemCategory));
     if (response.statusCode == 200) {
-      //print(response.statusCode);
       final List<dynamic> data = jsonDecode(response.body);
-      //  print(response.body);
-      //print(data);
       setState(() {
         categoryItems = data.map((value) {
           return value as Map<String, dynamic>;
@@ -250,20 +293,18 @@ class _EngineerBioState extends State<EngineerBio> {
       return;
     }
 
-    // Gather selected feature IDs
-    // You must have a mapping from Feature.name to backend id; here assuming Feature has an 'id'
     final List<int> additionalFeatures = _features
         .asMap()
         .entries
         .where((entry) => entry.value.isSelected)
-        .map((entry) => entry.key) // Or however you store the backend id
+        .map((entry) => entry.key)
         .toList();
 
-    // Gather images as Files
     final List<File> images = _houses
         .where((h) => h.fileImagePath != null)
         .map((h) => File(h.fileImagePath!))
         .toList();
+
     context.read<EngineerBioBloc>().add(
       EngineerBioEvent.uploadEngBio(
         engineerId: widget.engineerId,
@@ -280,20 +321,6 @@ class _EngineerBioState extends State<EngineerBio> {
         images: images,
       ),
     );
-    // print('Cent: ${centController.text}');
-    // print('SquareFeet: ${sqrftController.text}');
-    // print('TotalAmount: ${totalAmountController.text}');
-    // print('AdditionalFeatures: $additionalFeatures');
-
-    // context.read<PropertyInputBloc>().add(
-    //   PropertyInputEvent.propertySub(
-    //     userId: userId!,
-    //     sgft: double.parse(sqrftController.text),
-    //     cent: double.parse(centController.text),
-    //     amount: double.parse(amountController.text),
-    //     category: int.parse(selectedCategory!),
-    //   ),
-    // );
   }
 
   void _updateTotalAmount() {
@@ -305,7 +332,7 @@ class _EngineerBioState extends State<EngineerBio> {
 
   void _updateSquareFeet() {
     final centText = centController.text;
-    final cent = double.tryParse(centText); // use tryParse
+    final cent = double.tryParse(centText);
 
     if (cent != null) {
       final sqfeet = cent * 435.56;
@@ -315,255 +342,310 @@ class _EngineerBioState extends State<EngineerBio> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    //  double width = MediaQuery.of(context).size.width;
-    // double height = MediaQuery.of(context).size.height;
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.blue.shade300,
-          title: Text(
-            'Project Bio',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: const Color.fromARGB(255, 72, 5, 83),
-              fontWeight: FontWeight.bold,
+  InputDecoration _inputDecoration({String? hint, String? label}) {
+    return InputDecoration(
+      hintText: hint,
+      labelText: label,
+      labelStyle: const TextStyle(color: kSubText),
+      hintStyle: const TextStyle(color: kHint),
+      filled: true,
+      fillColor: kField,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(
+          color: kBorder,
+          width: 1.1,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(
+          color: kAccent,
+          width: 1.4,
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: kDanger),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: kDanger),
+      ),
+    );
+  }
+
+  Widget _buildLabeledField({
+    required String label,
+    required Widget child,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: kSubText,
             ),
           ),
-          centerTitle: true,
-        ),
-        body: BlocConsumer<EngineerBioBloc, EngineerBioState>(
-          listener: (context, state) {
-            state.when(
-              initial: () {},
-              loading: () {
-                setState(() {
-                  isLoading = true;
-                });
-              },
-              success: (response) async {
-                setState(() {
-                  isLoading = false;
-                });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Property details submitted successfully!'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-                //Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return ViewEngineerBookingDetails(engineerId: engineerId!,);
-                    },
-                  ),
-                );
-              },
-              error: (error) {
-                setState(() {
-                  isLoading = false;
-                });
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('Error: $error')));
-              },
-            );
-          },
-          builder: (context, state) => Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              // image: DecorationImage(
-              //   isAntiAlias: true,
-              //   // invertColors: true,
-              //   opacity: 0.3,
-              //   fit: BoxFit.cover,
-              //   image: AssetImage('assets/images/2678894.jpg'),
-              // ),
-              // gradient: LinearGradient(
-              //   colors: [Colors.blue.shade200, Colors.purple.shade100],
-              //   begin: Alignment.topLeft,
-              //   end: Alignment.bottomRight,
-              // ),
+          const SizedBox(height: 8),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title, {IconData? icon}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Row(
+        children: [
+          if (icon != null) ...[
+            Icon(icon, color: kAccent, size: 20),
+            const SizedBox(width: 8),
+          ],
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: kText,
             ),
-            child: SingleChildScrollView(
-              // padding: EdgeInsets.all(16.0),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAmountField({
+    required String label,
+    required TextEditingController controller,
+    bool readOnly = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextFormField(
+        controller: controller,
+        readOnly: readOnly,
+        keyboardType: TextInputType.number,
+        style: const TextStyle(color: kText),
+        decoration: _inputDecoration(label: label),
+      ),
+    );
+  }
+
+  Widget _buildInfoCard({required Widget child}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: kCard,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: kBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 22,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: kPageBg,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          'Project Bio',
+          style: TextStyle(
+            color: kText,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        iconTheme: const IconThemeData(color: kText),
+      ),
+      body: BlocConsumer<EngineerBioBloc, EngineerBioState>(
+        listener: (context, state) {
+          state.when(
+            initial: () {},
+            loading: () {
+              setState(() {
+                isLoading = true;
+              });
+            },
+            success: (response) async {
+              setState(() {
+                isLoading = false;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Property details submitted successfully!'),
+                  backgroundColor: kAccentDark,
+                ),
+              );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return ViewEngineerBookingDetails(
+                      engineerId: engineerId!,
+                    );
+                  },
+                ),
+              );
+            },
+            error: (error) {
+              setState(() {
+                isLoading = false;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error: $error')),
+              );
+            },
+          );
+        },
+        builder: (context, state) => Stack(
+          children: [
+            SingleChildScrollView(
               child: Form(
                 key: _formkey,
                 child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 9.0,
-                    right: 9.0,
-                    top: 10.0,
-                    bottom: 20.0,
-                  ),
-                  child: Card(
+                  padding: const EdgeInsets.all(16),
+                  child: _buildInfoCard(
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                        left: 9.0,
-                        right: 9.0,
-                        top: 15.0,
-                        bottom: 10.0,
-                      ),
+                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Center(child: _buildProfileImagePicker()),
-                          const SizedBox(height: 30),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Project Name:',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  // color: const Color.fromARGB(255, 72, 5, 83),
-                                ),
-                              ),
-                              const SizedBox(width: 25),
-                              Expanded(
-                                child: TextFormField(
-                                  controller: projectNameController,
-                                  validator: (v) => v == null || v.isEmpty
-                                      ? "Enter project name"
-                                      : null,
+                          const SizedBox(height: 24),
 
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                  ),
-                                ),
-                              ),
-                            ],
+                          _buildSectionTitle(
+                            "Project Details",
+                            icon: Icons.home_work_outlined,
                           ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'House Type:',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  // color: const Color.fromARGB(255, 72, 5, 83),
-                                ),
-                              ),
-                              const SizedBox(width: 40),
-                              Expanded(
-                                child: DropdownButtonFormField(
-                                  validator: (value) {
-                                    return value == null || value.isEmpty
-                                        ? "Please Select Category"
-                                        : null;
-                                  },
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    labelText: 'Select Category',
-                                  ),
-                                  items: categoryItems
-                                      .map(
-                                        (items) => DropdownMenuItem(
-                                          value: items['id'].toString(),
-                                          child: Text(items['name']),
-                                        ),
-                                      )
-                                      .toList(),
-                                  onChanged: (value) => setState(() {
-                                    selectedCategory = value;
-                                  }),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
 
-                          //  const SizedBox(height: 10),
+                          _buildLabeledField(
+                            label: "Project Name",
+                            child: TextFormField(
+                              controller: projectNameController,
+                              style: const TextStyle(color: kText),
+                              validator: (v) => v == null || v.isEmpty
+                                  ? "Enter project name"
+                                  : null,
+                              decoration: _inputDecoration(
+                                hint: "Enter project name",
+                              ),
+                            ),
+                          ),
+
+                          _buildLabeledField(
+                            label: "House Type",
+                            child: DropdownButtonFormField<String>(
+                              initialValue: selectedCategory,
+                              dropdownColor: Colors.white,
+                              style: const TextStyle(color: kText),
+                              validator: (value) {
+                                return value == null || value.isEmpty
+                                    ? "Please Select Category"
+                                    : null;
+                              },
+                              decoration: _inputDecoration(
+                                label: 'Select Category',
+                              ),
+                              items: categoryItems
+                                  .map(
+                                    (items) => DropdownMenuItem<String>(
+                                      value: items['id'].toString(),
+                                      child: Text(
+                                        items['name'],
+                                        style: const TextStyle(color: kText),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (value) => setState(() {
+                                selectedCategory = value;
+                              }),
+                            ),
+                          ),
+
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Cent:',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  //color: const Color.fromARGB(255, 72, 5, 83),
+                              Expanded(
+                                child: _buildLabeledField(
+                                  label: "Cent",
+                                  child: TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    controller: centController,
+                                    style: const TextStyle(color: kText),
+                                    decoration: _inputDecoration(
+                                      hint: "Enter cent",
+                                    ),
+                                  ),
                                 ),
                               ),
-                              const SizedBox(width: 97),
+                              const SizedBox(width: 14),
                               Expanded(
-                                child: TextFormField(
-                                  keyboardType: TextInputType.number,
-                                  controller: centController,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
+                                child: _buildLabeledField(
+                                  label: "Square Feet",
+                                  child: TextFormField(
+                                    readOnly: true,
+                                    controller: sqrftController,
+                                    style: const TextStyle(color: kText),
+                                    validator: (value) {
+                                      return value == null || value.isEmpty
+                                          ? "Please enter Square Feet"
+                                          : null;
+                                    },
+                                    decoration: _inputDecoration(
+                                      hint: "Auto calculated",
+                                    ),
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Square Feet:',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  // color: const Color.fromARGB(255, 72, 5, 83),
-                                ),
-                              ),
-                              const SizedBox(width: 39),
-                              Expanded(
-                                child: TextFormField(
-                                  readOnly: true,
-                                  validator: (value) {
-                                    return value == null || value.isEmpty
-                                        ? "Please enter Square Feet"
-                                        : null;
-                                  },
-                                  controller: sqrftController,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
+
+                          const SizedBox(height: 8),
+
                           InkWell(
                             onTap: _showAmountBreakdown,
+                            borderRadius: BorderRadius.circular(16),
                             child: Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                //  color: const Color.fromARGB(255, 7, 7, 7),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.black45),
+                                color: const Color(0xFFF8FAFC),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: kBorder),
                               ),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Amount Chart Sheet',
                                     style: TextStyle(
                                       fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: const Color.fromARGB(
-                                        255,
-                                        72,
-                                        5,
-                                        83,
-                                      ),
+                                      fontWeight: FontWeight.w700,
+                                      color: kText,
                                     ),
                                   ),
                                   Icon(
                                     _showAmountDetails
                                         ? Icons.keyboard_arrow_up
                                         : Icons.keyboard_arrow_down,
-                                    //   color: const Color.fromARGB(255, 8, 8, 8),
+                                    color: kAccent,
                                   ),
                                 ],
                               ),
@@ -571,148 +653,47 @@ class _EngineerBioState extends State<EngineerBio> {
                           ),
 
                           if (_showAmountDetails) ...[
-                            const SizedBox(height: 10),
-
-                            // 💡 Pink background container for the expanded details
+                            const SizedBox(height: 14),
                             Container(
-                              padding: const EdgeInsets.all(12),
+                              padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
-                                color: const Color.fromARGB(
-                                  255,
-                                  245,
-                                  204,
-                                  219,
-                                ), // Light pink background
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.pink.shade100),
+                                color: const Color(0xFFF8FAFC),
+                                borderRadius: BorderRadius.circular(18),
+                                border: Border.all(color: kBorder),
                               ),
                               child: Column(
                                 children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Exact Amount:',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: const Color.fromARGB(
-                                            255,
-                                            91,
-                                            9,
-                                            104,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 43),
-                                      Expanded(
-                                        child: TextFormField(
-                                          controller: expectedAmountController,
-                                          keyboardType: TextInputType.number,
-                                          decoration: InputDecoration(
-                                            border: OutlineInputBorder(),
-                                          ),
-                                        ),
-                                      ),
-                                      // Text(
-                                      //   value,
-                                      //   style: TextStyle(
-                                      //     fontSize: 16,
-                                      //     fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-                                      //     color: Colors.white,
-                                      //   ),
-                                      // ),
-                                    ],
+                                  _buildAmountField(
+                                    label: 'Exact Amount',
+                                    controller: expectedAmountController,
                                   ),
-                                  const SizedBox(height: 5),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Additional Amount:',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: const Color.fromARGB(
-                                            255,
-                                            91,
-                                            9,
-                                            104,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: TextFormField(
-                                          controller:
-                                              additionalAmountController,
-                                          keyboardType: TextInputType.number,
-                                          decoration: InputDecoration(
-                                            border: OutlineInputBorder(),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                  _buildAmountField(
+                                    label: 'Additional Amount',
+                                    controller: additionalAmountController,
                                   ),
-                                  const SizedBox(height: 5),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Total Amount:',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: const Color.fromARGB(
-                                            255,
-                                            91,
-                                            9,
-                                            104,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 50),
-                                      Expanded(
-                                        child: TextFormField(
-                                          controller: totalAmountController,
-                                          readOnly: true,
-                                          decoration: InputDecoration(
-                                            border: OutlineInputBorder(),
-                                          ),
-                                        ),
-                                      ),
-                                      // Text(
-                                      //   value,
-                                      //   style: TextStyle(
-                                      //     fontSize: 16,
-                                      //     fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-                                      //     color: Colors.white,
-                                      //   ),
-                                      // ),
-                                    ],
+                                  _buildAmountField(
+                                    label: 'Total Amount',
+                                    controller: totalAmountController,
+                                    readOnly: true,
                                   ),
                                 ],
                               ),
                             ),
                           ],
 
-                          const SizedBox(height: 30),
-                          // In your build:
+                          const SizedBox(height: 26),
+
                           Row(
                             children: [
-                              Text(
-                                'Work Proof:',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color.fromARGB(255, 72, 5, 83),
-                                ),
+                              _buildSectionTitle(
+                                'Work Proof',
+                                icon: Icons.photo_library_outlined,
                               ),
-                              Spacer(),
+                              const Spacer(),
                               IconButton(
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.add_a_photo,
-                                  color: Colors.deepOrange,
+                                  color: kAccent,
                                 ),
                                 onPressed: () async {
                                   final pickedFile = await ImagePicker()
@@ -720,44 +701,44 @@ class _EngineerBioState extends State<EngineerBio> {
                                   if (pickedFile != null) {
                                     setState(() {
                                       _houses.add(
-                                        House(fileImagePath: pickedFile.path),
-                                      ); // Append new image
+                                        House(
+                                          fileImagePath: pickedFile.path,
+                                        ),
+                                      );
                                     });
                                   }
                                 },
                                 tooltip: 'Upload Work Proof Image',
                               ),
-
-                              //tooltip: 'Upload Work Proof Image',
                             ],
                           ),
+
                           if (_houses.isNotEmpty)
                             SizedBox(
                               height: 150,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
                                 itemCount: _houses.length,
-                               itemBuilder: (context, index) =>
-    _buildHouseCard(_houses[index], index),
-
+                                itemBuilder: (context, index) =>
+                                    _buildHouseCard(_houses[index], index),
                               ),
                             )
                           else
-                            Text(
-                              "No Work Proof uploaded yet",
-                              style: TextStyle(color: Colors.grey),
+                            const Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                              child: Text(
+                                "No Work Proof uploaded yet",
+                                style: TextStyle(color: kSubText),
+                              ),
                             ),
 
-                          const SizedBox(height: 30),
-                          Text(
-                            'Additional Features:',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: const Color.fromARGB(255, 72, 5, 83),
-                            ),
+                          const SizedBox(height: 26),
+
+                          _buildSectionTitle(
+                            'Additional Features',
+                            icon: Icons.widgets_outlined,
                           ),
-                          const SizedBox(height: 15),
+
                           SizedBox(
                             height: 150,
                             child: ListView.builder(
@@ -768,31 +749,24 @@ class _EngineerBioState extends State<EngineerBio> {
                               },
                             ),
                           ),
-                          const SizedBox(height: 30),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Time Duration:',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color.fromARGB(255, 72, 5, 83),
-                                ),
+
+                          const SizedBox(height: 26),
+
+                          _buildLabeledField(
+                            label: "Time Duration",
+                            child: TextFormField(
+                              controller: timeDurationController,
+                              style: const TextStyle(color: kText),
+                              decoration: _inputDecoration(
+                                hint: "Eg. 6 months",
                               ),
-                              const SizedBox(width: 25),
-                              Expanded(
-                                child: TextFormField(
-                                  controller: timeDurationController,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                          const SizedBox(height: 40),
-                          Center(
+
+                          const SizedBox(height: 24),
+
+                          SizedBox(
+                            width: double.infinity,
                             child: ElevatedButton.icon(
                               icon: const Icon(
                                 Icons.cloud_upload,
@@ -801,32 +775,26 @@ class _EngineerBioState extends State<EngineerBio> {
                               label: const Text(
                                 'Upload Documents',
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 17,
                                   color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w800,
                                 ),
                               ),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.deepOrange,
+                                backgroundColor: kAccent,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 30,
-                                  vertical: 15,
+                                  vertical: 16,
                                 ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
+                                  borderRadius: BorderRadius.circular(18),
                                 ),
+                                elevation: 4,
                               ),
                               onPressed: () {
                                 if (_formkey.currentState!.validate()) {
                                   submitDetails();
                                 }
-                                // ScaffoldMessenger.of(context).showSnackBar(
-                                //   const SnackBar(
-                                //     content: Text('Registration successful!'),
-                                //     backgroundColor: Colors.green,
-                                //   ),
-                                // );
-                                // Navigator.pop(context);
                               },
                             ),
                           ),
@@ -837,7 +805,14 @@ class _EngineerBioState extends State<EngineerBio> {
                 ),
               ),
             ),
-          ),
+            if (isLoading)
+              Container(
+                color: Colors.black.withOpacity(0.12),
+                child: const Center(
+                  child: CircularProgressIndicator(color: kAccent),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -847,103 +822,112 @@ class _EngineerBioState extends State<EngineerBio> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              color: const Color.fromARGB(255, 91, 9, 104),
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+                color: kSubText,
+              ),
             ),
           ),
-          const SizedBox(width: 25),
+          const SizedBox(width: 12),
           Expanded(
             child: TextFormField(
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(border: OutlineInputBorder()),
+              style: const TextStyle(color: kText),
+              decoration: _inputDecoration(),
             ),
           ),
-          // Text(
-          //   value,
-          //   style: TextStyle(
-          //     fontSize: 16,
-          //     fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-          //     color: Colors.white,
-          //   ),
-          // ),
         ],
       ),
     );
   }
 
- Widget _buildHouseCard(House house, int index) {
-  return Container(
-    width: 130,
-    margin: const EdgeInsets.only(right: 15),
-    decoration: _cardDecoration(),
-    child: Stack(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(15),
-          child: Image.file(
-            File(house.fileImagePath!),
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: double.infinity,
+  Widget _buildHouseCard(House house, int index) {
+    return Container(
+      width: 130,
+      margin: const EdgeInsets.only(right: 15),
+      decoration: _cardDecoration(),
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Image.file(
+              File(house.fileImagePath!),
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            ),
           ),
-        ),
-
-        /// 🔴 Close Button
-        Positioned(
-          top: 6,
-          right: 6,
-          child: GestureDetector(
-            onTap: () {
-              setState(() {
-                _houses.removeAt(index);
-              });
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.6),
-                shape: BoxShape.circle,
-              ),
-              padding: const EdgeInsets.all(4),
-              child: const Icon(
-                Icons.close,
-                color: Colors.white,
-                size: 18,
+          Positioned(
+            top: 6,
+            right: 6,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _houses.removeAt(index);
+                });
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.45),
+                  shape: BoxShape.circle,
+                ),
+                padding: const EdgeInsets.all(4),
+                child: const Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 18,
+                ),
               ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
-
+        ],
+      ),
+    );
+  }
 
   Widget _buildFeatureCard(Feature feature) {
     return Container(
       width: 130,
       margin: const EdgeInsets.only(right: 15),
       decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.white24),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: feature.isSelected ? kAccent : kBorder,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: feature.isSelected
+                ? kAccent.withOpacity(0.12)
+                : Colors.black.withOpacity(0.04),
+            blurRadius: 14,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             feature.icon,
-            size: 40,
-            color: const Color.fromARGB(255, 233, 59, 82),
+            size: 36,
+            color: feature.isSelected ? kAccent : kSubText,
           ),
           const SizedBox(height: 10),
-          Text(
-            feature.name,
-            style: const TextStyle(color: Color.fromARGB(255, 143, 15, 32)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              feature.name,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: feature.isSelected ? kText : kSubText,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
           const SizedBox(height: 10),
           Checkbox(
@@ -953,7 +937,9 @@ class _EngineerBioState extends State<EngineerBio> {
                 feature.isSelected = value!;
               });
             },
-            fillColor: WidgetStateProperty.all(Colors.green),
+            activeColor: kAccent,
+            checkColor: Colors.white,
+            side: const BorderSide(color: kAccent),
           ),
         ],
       ),
@@ -965,19 +951,25 @@ BoxDecoration _cardDecoration() {
   return BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.circular(15),
-    border: Border.all(color: Colors.white24),
+    border: Border.all(color: const Color(0xFFE2E8F0)),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.05),
+        blurRadius: 16,
+        offset: const Offset(0, 8),
+      ),
+    ],
   );
 }
 
 TextStyle sectionTitleStyle() {
-  return TextStyle(
+  return const TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.bold,
-    color: Colors.black,
+    color: Color(0xFF0F172A),
   );
 }
 
-// Models
 class Feature {
   String name;
   IconData icon;
@@ -986,8 +978,8 @@ class Feature {
 }
 
 class House {
-  final String? image; // asset path
-  final String? fileImagePath; // picked image file path
+  final String? image;
+  final String? fileImagePath;
 
   House({this.image, this.fileImagePath});
 }
