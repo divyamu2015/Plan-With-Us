@@ -71,6 +71,7 @@ class _CartScreenState extends State<CartScreen> {
       setState(() {
         loading = false;
       });
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to load cart items')),
       );
@@ -83,6 +84,7 @@ class _CartScreenState extends State<CartScreen> {
     final response = await http.delete(Uri.parse(url));
     if (response.statusCode == 200) {
       fetchCartItems();
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Item removed from cart!'),
@@ -90,6 +92,7 @@ class _CartScreenState extends State<CartScreen> {
         ),
       );
     } else if (response.statusCode == 404) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Item not found'),
@@ -97,6 +100,7 @@ class _CartScreenState extends State<CartScreen> {
         ),
       );
     } else {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Failed to remove item'),
@@ -126,6 +130,7 @@ class _CartScreenState extends State<CartScreen> {
 
     await showDialog(
       context: context,
+      // ignore: deprecated_member_use
       barrierColor: Colors.black.withOpacity(0.6),
       builder: (_) {
         return Dialog(
@@ -138,11 +143,13 @@ class _CartScreenState extends State<CartScreen> {
               border: Border.all(color: kBorder),
               boxShadow: [
                 BoxShadow(
+                  // ignore: deprecated_member_use
                   color: Colors.black.withOpacity(0.45),
                   blurRadius: 28,
                   offset: const Offset(0, 16),
                 ),
                 BoxShadow(
+                  // ignore: deprecated_member_use
                   color: kGold.withOpacity(0.05),
                   blurRadius: 30,
                   spreadRadius: 1,
@@ -313,6 +320,7 @@ class _CartScreenState extends State<CartScreen> {
                             selectedQty,
                             unitPrice,
                           );
+                          // ignore: use_build_context_synchronously
                           Navigator.of(context).pop();
                         },
                         child: const Text(
@@ -366,6 +374,7 @@ class _CartScreenState extends State<CartScreen> {
         );
       }
       fetchCartItems();
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -376,6 +385,7 @@ class _CartScreenState extends State<CartScreen> {
         ),
       );
     } else {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to update quantity')),
       );
@@ -450,15 +460,18 @@ class _CartScreenState extends State<CartScreen> {
                                 end: Alignment.bottomRight,
                               ),
                               border: Border.all(
+                                // ignore: deprecated_member_use
                                 color: kGold.withOpacity(0.16),
                               ),
                               boxShadow: [
                                 BoxShadow(
+                                  // ignore: deprecated_member_use
                                   color: Colors.black.withOpacity(0.38),
                                   blurRadius: 24,
                                   offset: const Offset(0, 14),
                                 ),
                                 BoxShadow(
+                                  // ignore: deprecated_member_use
                                   color: kGold.withOpacity(0.04),
                                   blurRadius: 24,
                                   spreadRadius: 1,
@@ -586,6 +599,7 @@ class _CartScreenState extends State<CartScreen> {
                                             borderRadius:
                                                 BorderRadius.circular(14),
                                             border: Border.all(
+                                              // ignore: deprecated_member_use
                                               color: kGold.withOpacity(0.35),
                                             ),
                                           ),
@@ -621,11 +635,13 @@ class _CartScreenState extends State<CartScreen> {
                           ),
                           border: Border(
                             top: BorderSide(
+                              // ignore: deprecated_member_use
                               color: kGold.withOpacity(0.14),
                             ),
                           ),
                           boxShadow: [
                             BoxShadow(
+                              // ignore: deprecated_member_use
                               color: Colors.black.withOpacity(0.35),
                               blurRadius: 20,
                             ),
@@ -770,9 +786,11 @@ class _CartScreenState extends State<CartScreen> {
         height: 36,
         width: 36,
         decoration: BoxDecoration(
+          // ignore: deprecated_member_use
           color: kGold.withOpacity(0.08),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
+            // ignore: deprecated_member_use
             color: kGold.withOpacity(0.22),
           ),
         ),

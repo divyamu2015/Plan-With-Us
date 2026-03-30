@@ -210,7 +210,9 @@ bool isConfirmPasswordVisible = false;
             children: [
               Radio<String>(
                 value: "Male",
+                // ignore: deprecated_member_use
                 groupValue: _selectedGender,
+                // ignore: deprecated_member_use
                 onChanged: (value) {
                   setState(() {
                     _selectedGender = value;
@@ -220,7 +222,9 @@ bool isConfirmPasswordVisible = false;
               const Text("Male"),
               Radio<String>(
                 value: "Female",
+                // ignore: deprecated_member_use
                 groupValue: _selectedGender,
+                // ignore: deprecated_member_use
                 onChanged: (value) {
                   setState(() {
                     _selectedGender = value;

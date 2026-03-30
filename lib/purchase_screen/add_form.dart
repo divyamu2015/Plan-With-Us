@@ -36,28 +36,28 @@ class _FormPageState extends State<FormPage> {
     }
   }
 
-  void _submit() {
-    if (_formKey.currentState?.validate() ?? false) {
-      final data = {
-        'item': _itemController.text.trim(),
-        'price': double.tryParse(_priceController.text) ?? 0.0,
-        'offer': double.tryParse(_offerController.text) ?? 0.0,
-        'stock': int.tryParse(_stockController.text) ?? 0,
-        'description': _descriptionController.text.trim(),
-        'imagePath': _imageFile?.path,
-      };
+  // void _submit() {
+  //   if (_formKey.currentState?.validate() ?? false) {
+  //     final data = {
+  //       'item': _itemController.text.trim(),
+  //       'price': double.tryParse(_priceController.text) ?? 0.0,
+  //       'offer': double.tryParse(_offerController.text) ?? 0.0,
+  //       'stock': int.tryParse(_stockController.text) ?? 0,
+  //       'description': _descriptionController.text.trim(),
+  //       'imagePath': _imageFile?.path,
+  //     };
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Saved: ${data['item']}')),
-      );
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Saved: ${data['item']}')),
+  //     );
 
-      // Navigate to ListDisplay after saving
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ListDisplay()),
-      );
-    }
-  }
+  //     // Navigate to ListDisplay after saving
+  //     Navigator.push(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => const ListDisplay()),
+  //     );
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -71,7 +71,7 @@ class _FormPageState extends State<FormPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = const Color(0xFFB3E5FC); // Light Blue
+   // final Color primaryColor = const Color(0xFFB3E5FC); // Light Blue
     final Color accentColor = const Color(0xFF81D4FA);
     final Color backgroundColor = const Color(0xFFF5F9FC);
 
@@ -111,6 +111,7 @@ class _FormPageState extends State<FormPage> {
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
+                  // ignore: deprecated_member_use
                   color: Colors.black12.withOpacity(0.08),
                   blurRadius: 16,
                   offset: const Offset(0, 6),
@@ -125,6 +126,7 @@ class _FormPageState extends State<FormPage> {
                     height: 70,
                     width: double.infinity,
                     decoration: BoxDecoration(
+                      // ignore: deprecated_member_use
                       color: accentColor.withOpacity(0.6),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(24),

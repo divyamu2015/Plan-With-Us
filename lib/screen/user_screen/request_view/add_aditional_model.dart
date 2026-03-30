@@ -33,7 +33,7 @@ class AddAdditionalDetails {
 
   factory AddAdditionalDetails.fromJson(Map<String, dynamic> json) {
     var featureList = (json['features'] as List?) ?? [];
-    List<String> features = featureList.map((i) => i.toString()).toList();
+    featureList.map((i) => i.toString()).toList();
 
     return AddAdditionalDetails(
       id: json['id'] ?? 0,

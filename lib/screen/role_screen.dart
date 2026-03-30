@@ -13,7 +13,7 @@ class RoleSelectionScreen extends StatefulWidget {
 class _RoleSelectionScreenState extends State<RoleSelectionScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _rotationAnimation;
+  late Animation<double> rotationAnimation;
 
   @override
   void initState() {
@@ -22,7 +22,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
       vsync: this,
       duration: const Duration(seconds: 4),
     )..repeat();
-    _rotationAnimation = Tween<double>(
+    rotationAnimation = Tween<double>(
       begin: 0,
       end: 2 * 3.14159,
     ).animate(_controller);
@@ -67,7 +67,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
         side: CardSide.FRONT,
         speed: 1000,
         onFlipDone: (status) {
-          print(status);
+          //print(status);
         },
         front: Container(
           decoration: BoxDecoration(

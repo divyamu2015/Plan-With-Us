@@ -37,10 +37,10 @@ class _RequestViewBookingState extends State<RequestViewBooking> {
   final TextEditingController _centController = TextEditingController();
   final TextEditingController _squareController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _suggestionController = TextEditingController();
+  //final TextEditingController _suggestionController = TextEditingController();
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
-  final TextEditingController _featuresController = TextEditingController();
+ // final TextEditingController _featuresController = TextEditingController();
   File? _suggestionFile;
   final _formKey = GlobalKey<FormState>();
   final List<Feature> _features = [];
@@ -49,8 +49,8 @@ class _RequestViewBookingState extends State<RequestViewBooking> {
   TimeOfDay? startTime = TimeOfDay(hour: 9, minute: 0);
   TimeOfDay? endTime = TimeOfDay(hour: 17, minute: 0);
   bool acceptedTerms = false;
-  File? _image;
-  File? _pdfFile;
+  File? image;
+  File? pdfFile;
   int? userId;
   int? engineerId;
   bool isLoading = true;
@@ -62,7 +62,7 @@ class _RequestViewBookingState extends State<RequestViewBooking> {
     super.initState();
     _getAdditionalFeat();
     requestId = widget.requestId;
-    print("book your estimate-------------vgh $requestId");
+   // print("book your estimate-------------vgh $requestId");
     if (widget.userId != null) {
       userId = widget.userId!;
       engineerId = widget.engineerId;
@@ -79,7 +79,7 @@ class _RequestViewBookingState extends State<RequestViewBooking> {
     );
     if (pickedFile != null) {
       setState(() {
-        _image = File(pickedFile.path);
+        image = File(pickedFile.path);
       });
     }
   }
@@ -136,16 +136,16 @@ class _RequestViewBookingState extends State<RequestViewBooking> {
     final url = Uri.parse(
       'https://417sptdw-8001.inc1.devtunnels.ms/userapp/requests/$userId/${widget.requestId}/',
     );
-    print(url);
+  //  print(url);
     try {
       final res = await http.get(url);
-      print('Request view ${res.body}');
+     // print('Request view ${res.body}');
       if (res.statusCode == 200) {
-        print(res.statusCode);
+      //  print(res.statusCode);
         final data = jsonDecode(res.body);
-        print(data);
+      //  print(data);
         final propertyDetails = GetPropertyInputModel.fromJson(data);
-        print(propertyDetails);
+      //  print(propertyDetails);
         setState(() {
           _centController.text = propertyDetails.cent.toString();
           _squareController.text = propertyDetails.sqft.toString();
@@ -270,10 +270,11 @@ class _RequestViewBookingState extends State<RequestViewBooking> {
     var streamedResponse = await request.send();
     var response = await http.Response.fromStream(streamedResponse);
 
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+   // print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200 || response.statusCode == 201) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("✅ Booking Successful"),
@@ -281,6 +282,7 @@ class _RequestViewBookingState extends State<RequestViewBooking> {
         ),
       );
     } else {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("❌ Booking Failed. Please try again."),
@@ -352,6 +354,7 @@ As the appointed engineer, I commit to completing the construction project on ti
         width: 140,
         margin: const EdgeInsets.only(right: 16),
         decoration: BoxDecoration(
+          // ignore: deprecated_member_use
           color: Colors.white.withOpacity(.05),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
@@ -627,7 +630,7 @@ As the appointed engineer, I commit to completing the construction project on ti
                                 child: GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      _pdfFile = null;
+                                      pdfFile = null;
                                     });
                                   },
                                   child: Container(
@@ -743,6 +746,7 @@ As the appointed engineer, I commit to completing the construction project on ti
                             if (_formKey.currentState?.validate() ?? false) {
                               await postEngineerBooking(); // <-- This posts to the API
                               Navigator.push(
+                                // ignore: use_build_context_synchronously
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>DashboardScreen(uderId: userId!)
@@ -807,6 +811,7 @@ As the appointed engineer, I commit to completing the construction project on ti
           decoration: InputDecoration(
             prefixIcon: Icon(icon, color: const Color(0xFFD4AF37)),
             filled: true,
+            // ignore: deprecated_member_use
             fillColor: Colors.white.withOpacity(.05),
 
             border: OutlineInputBorder(

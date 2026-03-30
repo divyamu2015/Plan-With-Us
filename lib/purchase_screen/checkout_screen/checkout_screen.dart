@@ -47,11 +47,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           checkoutResponse = List<Map<String, dynamic>>.from(data['data']);
         });
       } else {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Checkout failed: ${response.statusCode}')),
         );
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );

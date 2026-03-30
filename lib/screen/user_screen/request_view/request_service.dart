@@ -7,14 +7,14 @@ Future<GetPropertyInputModel> getUserRequests(int userId, int requestId) async {
   final url = Uri.parse(
     'https://417sptdw-8001.inc1.devtunnels.ms/userapp/register/$userId/',
   );
-  print('request service url=== $url');
+ // print('request service url=== $url');
   final response = await http.get(url);
   if (response.statusCode == 200) {
-    print(response.statusCode);
-    print(response.body);
+    //print(response.statusCode);
+    //print(response.body);
 
     final jsonData = jsonDecode(response.body);
-    print(jsonData);
+    //print(jsonData);
     return GetPropertyInputModel.fromJson(jsonData);
   } else {
     throw Exception(

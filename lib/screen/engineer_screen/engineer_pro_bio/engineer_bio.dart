@@ -44,7 +44,6 @@ class _EngineerBioState extends State<EngineerBio> {
   // White elegant UI colors
   static const Color kPageBg = Color(0xFFF8FAFC);
   static const Color kCard = Colors.white;
-  static const Color kCardSoft = Color(0xFFFDFDFD);
   static const Color kField = Colors.white;
   static const Color kBorder = Color(0xFFE2E8F0);
   static const Color kAccent = Color(0xFF19C37D);
@@ -128,11 +127,13 @@ class _EngineerBioState extends State<EngineerBio> {
                 color: const Color(0xFFF8FAFC),
                 borderRadius: BorderRadius.circular(22),
                 border: Border.all(
+                  // ignore: deprecated_member_use
                   color: kAccent.withOpacity(0.35),
                   width: 1.3,
                 ),
                 boxShadow: [
                   BoxShadow(
+                    // ignore: deprecated_member_use
                     color: Colors.black.withOpacity(0.06),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
@@ -160,6 +161,7 @@ class _EngineerBioState extends State<EngineerBio> {
                   border: Border.all(color: Colors.white, width: 3),
                   boxShadow: [
                     BoxShadow(
+                      // ignore: deprecated_member_use
                       color: kAccent.withOpacity(0.25),
                       blurRadius: 12,
                     ),
@@ -447,6 +449,7 @@ class _EngineerBioState extends State<EngineerBio> {
         border: Border.all(color: kBorder),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.05),
             blurRadius: 22,
             offset: const Offset(0, 10),
@@ -807,6 +810,7 @@ class _EngineerBioState extends State<EngineerBio> {
             ),
             if (isLoading)
               Container(
+                // ignore: deprecated_member_use
                 color: Colors.black.withOpacity(0.12),
                 child: const Center(
                   child: CircularProgressIndicator(color: kAccent),
@@ -872,6 +876,7 @@ class _EngineerBioState extends State<EngineerBio> {
               },
               child: Container(
                 decoration: BoxDecoration(
+                  // ignore: deprecated_member_use
                   color: Colors.black.withOpacity(0.45),
                   shape: BoxShape.circle,
                 ),
@@ -902,7 +907,9 @@ class _EngineerBioState extends State<EngineerBio> {
         boxShadow: [
           BoxShadow(
             color: feature.isSelected
+                // ignore: deprecated_member_use
                 ? kAccent.withOpacity(0.12)
+                // ignore: deprecated_member_use
                 : Colors.black.withOpacity(0.04),
             blurRadius: 14,
             offset: const Offset(0, 8),
@@ -954,6 +961,7 @@ BoxDecoration _cardDecoration() {
     border: Border.all(color: const Color(0xFFE2E8F0)),
     boxShadow: [
       BoxShadow(
+        // ignore: deprecated_member_use
         color: Colors.black.withOpacity(0.05),
         blurRadius: 16,
         offset: const Offset(0, 8),

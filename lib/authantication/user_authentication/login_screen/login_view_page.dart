@@ -191,6 +191,7 @@ class _LoginScreenState extends State<LoginScreen>
                 } else if (response.role.toLowerCase() == 'engineer') {
                   await storeEngineerId(response.engineerId);
                   engineerId = await getEngineerId();
+                  // ignore: use_build_context_synchronously
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                       builder: (context) =>

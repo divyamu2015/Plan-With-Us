@@ -97,6 +97,7 @@ class _AdvanceBookingPaymentScreenState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
+        // ignore: deprecated_member_use
         color: Colors.green.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
@@ -343,12 +344,12 @@ class PaymentService {
         body: jsonEncode(body),
       );
 
-      print(response.statusCode);
-      print(response.body);
-
+    //  print(response.statusCode);
+     // print(response.body);
+//
       return response.statusCode == 201;
     } catch (e) {
-      print("Payment Error: $e");
+    //  print("Payment Error: $e");
       return false;
     }
   }

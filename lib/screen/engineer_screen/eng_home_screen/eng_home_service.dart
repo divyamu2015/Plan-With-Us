@@ -44,7 +44,7 @@ class _ViewEngineerBookingDetailState
     super.initState();
     engineerId = widget.engineerId;
     _sliderController = GlobalKey<SliderDrawerState>();
-    print(engineerId);
+   // print(engineerId);
     _loadBookingIdAndFetch();
 
     fetchBookingDetails();
@@ -499,6 +499,7 @@ class _ViewEngineerBookingDetailState
                           if (amount == null || amount.isEmpty) return;
                           await updateAcceptStatus(data['id'], 'accepted');
                           Navigator.pushReplacement(
+                            // ignore: use_build_context_synchronously
                             context,
                             MaterialPageRoute(
                               builder: (_) => BookingStatusTabScreen(

@@ -57,6 +57,7 @@ class FeedbackPageState extends State<FeedbackPage> {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         showSuccess("Feedback submitted successfully!");
+        // ignore: use_build_context_synchronously
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) {

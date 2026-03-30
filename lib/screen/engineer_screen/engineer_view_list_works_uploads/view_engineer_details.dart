@@ -5,15 +5,15 @@ import 'package:house_construction_pro/constant_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
-class ProjectDetailsPage extends StatefulWidget {
+class ViewProjectDetailsPage extends StatefulWidget {
   final int workId;
-  const ProjectDetailsPage({super.key, required this.workId});
+  const ViewProjectDetailsPage({super.key, required this.workId});
 
   @override
-  State<ProjectDetailsPage> createState() => _ProjectDetailsPageState();
+  State<ViewProjectDetailsPage> createState() => _ViewProjectDetailsPageState();
 }
 
-class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
+class _ViewProjectDetailsPageState extends State<ViewProjectDetailsPage> {
   //final String baseUrl = "https://417sptdw-8001.inc1.devtunnels.ms";
 
   Map<String, dynamic>? work;
@@ -152,7 +152,7 @@ final propertyImage=work?["property_image"];
           ],
         ),
       ),
-      bottomNavigationBar: _buildActionButtons(),
+   //   bottomNavigationBar: _buildActionButtons(),
     );
   }
 
@@ -515,30 +515,30 @@ Future<void> updateWorkWithImage({
     );
   }
 
-  Widget _buildActionButtons() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(color: Colors.white),
-      child: Row(
-        children: [
-          Expanded(
-            child: OutlinedButton(
-              onPressed: () {
-                // Navigate to edit page
-              },
-              child: const Text("Edit"),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              onPressed: deleteWork,
-              child: const Text("Delete"),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildActionButtons() {
+  //   return Container(
+  //     padding: const EdgeInsets.all(16),
+  //     decoration: const BoxDecoration(color: Colors.white),
+  //     child: Row(
+  //       children: [
+  //         Expanded(
+  //           child: OutlinedButton(
+  //             onPressed: () {
+  //               // Navigate to edit page
+  //             },
+  //             child: const Text("Edit"),
+  //           ),
+  //         ),
+  //         const SizedBox(width: 12),
+  //         Expanded(
+  //           child: ElevatedButton(
+  //             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+  //             onPressed: deleteWork,
+  //             child: const Text("Delete"),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

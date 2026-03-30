@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:house_construction_pro/authantication/user_authentication/login_screen/login_view_page.dart';
+//import 'package:house_construction_pro/authantication/user_authentication/login_screen/login_view_page.dart';
 import 'package:house_construction_pro/constant_page.dart';
 import 'package:house_construction_pro/screen/user_screen/home_page/home_page_model.dart';
 import 'package:house_construction_pro/screen/user_screen/home_page/home_page_service.dart';
@@ -36,7 +36,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late Future<HouseSearchModel> houseSearchFuture;
   bool isPredicting = false;
-  final int _bottomNavIndex = 0; // Default index of the first screen
+  //final int _bottomNavIndex = 0; // Default index of the first screen
   int? engineerId;
   int? requestId;
   int? userId;
@@ -92,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
     engineerId = widget.engineerId;
     userId = widget.userId;
     requestId = widget.requestId;
-    print("userId in home page: $requestId");
+   // print("userId in home page: $requestId");
     houseSearchFuture = fetchHouseSearch(
       userId: widget.userId!,
       category: widget.catId!,
@@ -102,47 +102,47 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<void> _showLogoutDialog(BuildContext context) async {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Logout Alert"),
-        content: const Text("Are you sure you want to logout?"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close dialog (No)
-            },
-            child: const Text("No"),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close dialog first
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
-              ); // Navigate to login (Yes)
-            },
-            child: const Text(
-              "Yes, Logout",
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Future<void> _showLogoutDialog(BuildContext context) async {
+  //   return showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: const Text("Logout Alert"),
+  //       content: const Text("Are you sure you want to logout?"),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () {
+  //             Navigator.of(context).pop(); // Close dialog (No)
+  //           },
+  //           child: const Text("No"),
+  //         ),
+  //         TextButton(
+  //           onPressed: () {
+  //             Navigator.of(context).pop(); // Close dialog first
+  //             Navigator.pushReplacement(
+  //               context,
+  //               MaterialPageRoute(builder: (context) => LoginScreen()),
+  //             ); // Navigate to login (Yes)
+  //           },
+  //           child: const Text(
+  //             "Yes, Logout",
+  //             style: TextStyle(color: Colors.red),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Future<void> storeUserId(int workId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('id', workId);
-    print('User ID stored: $workId');
+   // print('User ID stored: $workId');
   }
 
   Future<int?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     workId = prefs.getInt('id');
-    print("Retrieved User ID: $workId");
+    //print("Retrieved User ID: $workId");
     return workId;
   }
 
@@ -241,6 +241,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             border: Border.all(color: Colors.white10),
                             boxShadow: [
                               BoxShadow(
+                                // ignore: deprecated_member_use
                                 color: Colors.black.withOpacity(.4),
                                 blurRadius: 10,
                                 offset: const Offset(0, 5),
@@ -289,6 +290,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             vertical: 6,
                                           ),
                                           decoration: BoxDecoration(
+                                            // ignore: deprecated_member_use
                                             color: Colors.black.withOpacity(
                                               0.6,
                                             ),

@@ -167,6 +167,7 @@ class _ShopScreenState extends State<ShopScreen> {
                   margin: const EdgeInsets.only(top: 4, bottom: 18),
                   width: 72,
                   height: 1.2,
+                  // ignore: deprecated_member_use
                   color: kGold.withOpacity(0.7),
                 ),
                 Expanded(
@@ -290,16 +291,19 @@ class LuxuryProductCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         border: Border.all(
+          // ignore: deprecated_member_use
           color: kGold.withOpacity(0.28),
           width: 0.8,
         ),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: kGold.withOpacity(0.05),
             blurRadius: 30,
             spreadRadius: 1,
           ),
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.45),
             blurRadius: 20,
             offset: const Offset(0, 14),
@@ -337,6 +341,7 @@ class LuxuryProductCard extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
+              // ignore: deprecated_member_use
               color: kSubText.withOpacity(0.88),
               fontSize: 11,
               height: 1.45,
@@ -386,6 +391,7 @@ class LuxuryProductCard extends StatelessWidget {
               Expanded(
                 child: OutlinedButton(
                   style: OutlinedButton.styleFrom(
+                    // ignore: deprecated_member_use
                     side: BorderSide(color: kGold.withOpacity(0.9)),
                     foregroundColor: kGold,
                     padding: const EdgeInsets.symmetric(vertical: 14),
@@ -396,6 +402,7 @@ class LuxuryProductCard extends StatelessWidget {
                   onPressed: () async {
                     final prefs = await SharedPreferences.getInstance();
                     await prefs.setInt('id', product.id);
+                    // ignore: use_build_context_synchronously
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         backgroundColor: Colors.black87,
@@ -405,6 +412,7 @@ class LuxuryProductCard extends StatelessWidget {
                         ),
                       ),
                     );
+                    // ignore: use_build_context_synchronously
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) {
@@ -485,6 +493,7 @@ class LuxuryProductCard extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
+              // ignore: deprecated_member_use
               Colors.blueGrey.shade900.withOpacity(0.25),
               Colors.black,
             ],

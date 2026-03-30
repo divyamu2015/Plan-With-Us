@@ -307,6 +307,7 @@ class _ItemDetailState extends State<ItemDetail> {
                         };
                       //  _razorpay.open(options);
                       } else if (method == 'cod') {
+                        // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('COD Selected')),
                         );

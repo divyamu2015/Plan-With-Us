@@ -25,7 +25,7 @@ class _DashboardScreenState extends State<DashboardScreen>   with SingleTickerPr
   String? bookingsError;
   bool showNotifications = true;
   bool showBookingsFromNotification = false;
-  late Animation<double> _rotationAnimation;
+  late Animation<double> rotationAnimation;
  late AnimationController _controller;
   @override
   void initState() {
@@ -40,7 +40,7 @@ class _DashboardScreenState extends State<DashboardScreen>   with SingleTickerPr
       vsync: this,
       duration: const Duration(seconds: 4),
     )..repeat();
-    _rotationAnimation = Tween<double>(
+    rotationAnimation = Tween<double>(
       begin: 0,
       end: 2 * 3.14159,
     ).animate(_controller);
@@ -124,7 +124,7 @@ class _DashboardScreenState extends State<DashboardScreen>   with SingleTickerPr
         return null;
       }
     } catch (e) {
-      print("History Error: $e");
+    //  print("History Error: $e");
       return null;
     }
   }
@@ -133,6 +133,7 @@ class _DashboardScreenState extends State<DashboardScreen>   with SingleTickerPr
     final payment = await fetchPaymentHistory(bookingId);
 
     if (payment == null) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Failed to fetch payment history")),
       );
@@ -140,6 +141,7 @@ class _DashboardScreenState extends State<DashboardScreen>   with SingleTickerPr
     }
 
     showDialog(
+      // ignore: use_build_context_synchronously
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -199,6 +201,7 @@ Widget _buildElegantLogoutButton() {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.red.withOpacity(0.3),
             blurRadius: 12,
             offset: const Offset(0, 6),
@@ -535,25 +538,25 @@ void showBookingsDialog() {
   );
 }
 
-  Widget _buildDashboard() {
-    return Card(
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _buildBookingCards(), // Show booking cards at top!
-            SizedBox(height: 18),
-            // Text(
-            //   "Your Progress Today",
-            //   style: Theme.of(context).textTheme.titleLarge,
-            // ),
-            // Add other widgets as needed
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildDashboard() {
+  //   return Card(
+  //     elevation: 4,
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(16),
+  //       child: Column(
+  //         children: [
+  //           _buildBookingCards(), // Show booking cards at top!
+  //           SizedBox(height: 18),
+  //           // Text(
+  //           //   "Your Progress Today",
+  //           //   style: Theme.of(context).textTheme.titleLarge,
+  //           // ),
+  //           // Add other widgets as needed
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -660,6 +663,7 @@ void showBookingsDialog() {
                       height: 200,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
+                        // ignore: deprecated_member_use
                         color: Colors.black.withOpacity(0.4),
                       ),
                     ),
@@ -869,6 +873,7 @@ Widget _quickActionCard({
     child: Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
+        // ignore: deprecated_member_use
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(18),
       ),
@@ -887,54 +892,54 @@ Widget _quickActionCard({
 }
 
 // Individual Floating Menu Option
-class _FloatingMenuButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
+// class _FloatingMenuButton extends StatelessWidget {
+//   final String label;
+//   final IconData icon;
+//   final VoidCallback onTap;
 
-  const _FloatingMenuButton({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-  });
+//   const _FloatingMenuButton({
+//     required this.label,
+//     required this.icon,
+//     required this.onTap,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // Label bubble
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.grey[700],
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-        // Icon button
-        Material(
-          color: Colors.teal[600],
-          shape: const CircleBorder(),
-          child: InkWell(
-            customBorder: const CircleBorder(),
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Icon(icon, color: Colors.white, size: 26),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       children: [
+//         // Label bubble
+//         Container(
+//           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+//           decoration: BoxDecoration(
+//             color: Colors.grey[700],
+//             borderRadius: BorderRadius.circular(8),
+//           ),
+//           child: Text(
+//             label,
+//             style: const TextStyle(
+//               color: Colors.white,
+//               fontWeight: FontWeight.w600,
+//               fontSize: 14,
+//             ),
+//           ),
+//         ),
+//         const SizedBox(width: 8),
+//         // Icon button
+//         Material(
+//           color: Colors.teal[600],
+//           shape: const CircleBorder(),
+//           child: InkWell(
+//             customBorder: const CircleBorder(),
+//             onTap: onTap,
+//             child: Padding(
+//               padding: const EdgeInsets.all(12.0),
+//               child: Icon(icon, color: Colors.white, size: 26),
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
 
   

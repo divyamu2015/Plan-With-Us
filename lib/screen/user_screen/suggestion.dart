@@ -40,7 +40,7 @@ class _MaterialBudgetSuggestionPageState
   void initState() {
     super.initState();
     requestId = widget.requestId;
-    print('MaterialBudgetSuggestionPage requestId: $requestId');
+   // print('MaterialBudgetSuggestionPage requestId: $requestId');
   }
 
   @override
@@ -76,17 +76,21 @@ class _MaterialBudgetSuggestionPageState
       final filePath = '${directory.path}/MaterialBudget_${widget.requestId}.pdf';
       final file = File(filePath);
       await file.writeAsBytes(bytes);
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('PDF downloaded successfully!',),
            backgroundColor: Colors.green,),
       );
+      // ignore: deprecated_member_use
       await Share.shareXFiles([XFile(file.path)], text: "Material Budget PDF");
     } else {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to download: ${result.statusCode}')),
       );
     }
   } catch (e) {
+    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Error downloading PDF: $e')),
     );
@@ -299,20 +303,20 @@ class _MaterialBudgetSuggestionPageState
   }
 
   // CSV Export Helper
-  String _convertToCSV(
-    String plan,
-    double budget,
-    Map<String, dynamic> materials,
-  ) {
-    String csv =
-        'Material Budget for $plan\nEstimated Total Budget,₹${budget.toStringAsFixed(2)}\n\n';
-    csv += "Category,Material,Quantity,Rate (₹),Total (₹)\n";
-    materials.forEach((cat, items) {
-      for (var item in items) {
-        csv +=
-            '$cat,${item['item']},${item['quantity']},${item['rate']},${item['total']}\n';
-      }
-    });
-    return csv;
-  }
+  // String _convertToCSV(
+  //   String plan,
+  //   double budget,
+  //   Map<String, dynamic> materials,
+  // ) {
+  //   String csv =
+  //       'Material Budget for $plan\nEstimated Total Budget,₹${budget.toStringAsFixed(2)}\n\n';
+  //   csv += "Category,Material,Quantity,Rate (₹),Total (₹)\n";
+  //   materials.forEach((cat, items) {
+  //     for (var item in items) {
+  //       csv +=
+  //           '$cat,${item['item']},${item['quantity']},${item['rate']},${item['total']}\n';
+  //     }
+  //   });
+  //   return csv;
+  // }
 }

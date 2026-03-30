@@ -199,6 +199,7 @@ class _PaymentOppState extends State<PaymentOpp> {
                 child: Container(
                   width: 70.w,
                   height: 1.2,
+                  // ignore: deprecated_member_use
                   color: kGold.withOpacity(0.75),
                 ),
               ),
@@ -219,15 +220,18 @@ class _PaymentOppState extends State<PaymentOpp> {
                       end: Alignment.bottomRight,
                     ),
                     border: Border.all(
+                      // ignore: deprecated_member_use
                       color: kGold.withOpacity(0.18),
                     ),
                     boxShadow: [
                       BoxShadow(
+                        // ignore: deprecated_member_use
                         color: Colors.black.withOpacity(0.38),
                         blurRadius: 28,
                         offset: const Offset(0, 16),
                       ),
                       BoxShadow(
+                        // ignore: deprecated_member_use
                         color: kGold.withOpacity(0.04),
                         blurRadius: 30,
                         spreadRadius: 1,
@@ -297,6 +301,7 @@ class _PaymentOppState extends State<PaymentOpp> {
                       borderRadius: BorderRadius.circular(22.r),
                       border: Border.all(
                         color: isSelected
+                            // ignore: deprecated_member_use
                             ? kGold.withOpacity(0.75)
                             : kBorder,
                         width: isSelected ? 1.2 : 1,
@@ -304,6 +309,7 @@ class _PaymentOppState extends State<PaymentOpp> {
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
+                                // ignore: deprecated_member_use
                                 color: kGold.withOpacity(0.08),
                                 blurRadius: 18,
                                 spreadRadius: 1,
@@ -318,11 +324,14 @@ class _PaymentOppState extends State<PaymentOpp> {
                           width: 46.w,
                           decoration: BoxDecoration(
                             color: isSelected
+                                // ignore: deprecated_member_use
                                 ? kGold.withOpacity(0.12)
+                                // ignore: deprecated_member_use
                                 : Colors.white.withOpacity(0.04),
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: isSelected
+                                  // ignore: deprecated_member_use
                                   ? kGold.withOpacity(0.4)
                                   : kBorder,
                             ),

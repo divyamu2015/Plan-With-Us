@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
+import 'package:house_construction_pro/authantication/user_authentication/login_screen/login_view_page.dart';
 import 'package:house_construction_pro/screen/engineer_screen/eng_profile_management/eng_profile_manage_view.dart';
-import 'package:house_construction_pro/screen/engineer_screen/engineer_crud_view.dart';
 import 'package:house_construction_pro/screen/engineer_screen/engineer_pro_bio/engineer_bio.dart';
+import 'package:house_construction_pro/screen/engineer_screen/engineer_view_list_works_uploads/engineer_view_work_uploads.dart';
 import 'package:house_construction_pro/screen/engineer_screen/view_customer_feedback.dart';
 import 'package:house_construction_pro/screen/engineer_screen/view_user_booking_details/view_booking_details.dart';
-import 'package:house_construction_pro/screen/role_screen.dart';
 import 'package:http/http.dart' as http;
 
 class ViewEngineerBookingDetails extends StatefulWidget {
@@ -39,12 +39,12 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
   static const Color kCardBorder = Color(0xFFE7E0D4);
   static const Color kPrimary = Color(0xFF2F6B57);
   static const Color kPrimaryDark = Color(0xFF234E40);
-  static const Color kAccent = Color(0xFF5FAF8D);
+  //static const Color kAccent = Color(0xFF5FAF8D);
   static const Color kText = Color(0xFF1F2937);
   static const Color kSubText = Color(0xFF6B7280);
   static const Color kDanger = Color(0xFFD9534F);
   static const Color kDangerSoft = Color(0xFFFDECEC);
-  static const Color kSuccessSoft = Color(0xFFEAF7F0);
+ // static const Color kSuccessSoft = Color(0xFFEAF7F0);
   static const Color kGoldSoft = Color(0xFFB48A3C);
 
   @override
@@ -170,6 +170,7 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
               return Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
+                  // ignore: deprecated_member_use
                   color: Colors.white.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(18),
                 ),
@@ -211,7 +212,7 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
     } else if (title == 'View Engineer Work') {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => ProjectDetailsPage(workId: engineerId!),
+          builder: (context) => EngineerWorksListScreen(engineerId: engineerId!),
         ),
       );
     } else if (title == 'View Engineer Feedback') {
@@ -256,7 +257,7 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) {
-                    return RoleSelectionScreen();
+                    return LoginScreen();
                   },
                 ),
               );
@@ -308,6 +309,7 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
         border: Border.all(color: kCardBorder),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.05),
             blurRadius: 18,
             offset: const Offset(0, 10),
@@ -431,6 +433,7 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
         border: Border.all(color: kCardBorder),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.06),
             blurRadius: 20,
             offset: const Offset(0, 10),
@@ -781,6 +784,7 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
 
     return await showDialog<String>(
       context: context,
+      // ignore: deprecated_member_use
       barrierColor: Colors.black.withOpacity(0.18),
       builder: (context) {
         return Dialog(
@@ -794,6 +798,7 @@ class _ViewEngineerBookingDetailsState extends State<ViewEngineerBookingDetails>
               border: Border.all(color: kCardBorder),
               boxShadow: [
                 BoxShadow(
+                  // ignore: deprecated_member_use
                   color: Colors.black.withOpacity(0.08),
                   blurRadius: 26,
                   offset: const Offset(0, 14),
@@ -1071,80 +1076,82 @@ class _AcceptedBookingScreenState extends State<AcceptedBookingScreen> {
     fetchAcceptedBookings();
   }
 
-  Future<void> _showPaymentDialog(int bookingId) async {
-    final url =
-        'https://417sptdw-8001.inc1.devtunnels.ms/userapp/engineer_view_payment_of_booking/$bookingId/';
+  // Future<void> _showPaymentDialog(int bookingId) async {
+  //   final url =
+  //       'https://417sptdw-8001.inc1.devtunnels.ms/userapp/engineer_view_payment_of_booking/$bookingId/';
 
-    try {
-      final response = await http.get(Uri.parse(url));
+  //   try {
+  //     final response = await http.get(Uri.parse(url));
 
-      if (response.statusCode == 200) {
-        final decoded = jsonDecode(response.body);
-        final data = decoded['data'];
-        final payment = data['payment'];
+  //     if (response.statusCode == 200) {
+  //       final decoded = jsonDecode(response.body);
+  //       final data = decoded['data'];
+  //       final payment = data['payment'];
 
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              backgroundColor: kSurface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(22),
-              ),
-              title: const Text(
-                "Payment Details",
-                style: TextStyle(color: kText, fontWeight: FontWeight.w700),
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Customer: ${data['user_name']}",
-                    style: const TextStyle(color: kText),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Payment Type: ${payment['payment_type']}",
-                    style: const TextStyle(color: kText),
-                  ),
-                  Text(
-                    "Payment Status: ${payment['status']}",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: payment['status'] == 'completed'
-                          ? kSuccess
-                          : kDanger,
-                    ),
-                  ),
-                  Text(
-                    "Amount: ₹${payment['total_amount']}",
-                    style: const TextStyle(color: kText),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      await _markWorkCompleted(bookingId);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: kPrimary,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: const Text("Work Completed"),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error: $e")));
-    }
-  }
+  //       showDialog(
+  //         // ignore: use_build_context_synchronously
+  //         context: context,
+  //         builder: (context) {
+  //           return AlertDialog(
+  //             backgroundColor: kSurface,
+  //             shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.circular(22),
+  //             ),
+  //             title: const Text(
+  //               "Payment Details",
+  //               style: TextStyle(color: kText, fontWeight: FontWeight.w700),
+  //             ),
+  //             content: Column(
+  //               mainAxisSize: MainAxisSize.min,
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Text(
+  //                   "Customer: ${data['user_name']}",
+  //                   style: const TextStyle(color: kText),
+  //                 ),
+  //                 const SizedBox(height: 8),
+  //                 Text(
+  //                   "Payment Type: ${payment['payment_type']}",
+  //                   style: const TextStyle(color: kText),
+  //                 ),
+  //                 Text(
+  //                   "Payment Status: ${payment['status']}",
+  //                   style: TextStyle(
+  //                     fontWeight: FontWeight.bold,
+  //                     color: payment['status'] == 'completed'
+  //                         ? kSuccess
+  //                         : kDanger,
+  //                   ),
+  //                 ),
+  //                 Text(
+  //                   "Amount: ₹${payment['total_amount']}",
+  //                   style: const TextStyle(color: kText),
+  //                 ),
+  //                 const SizedBox(height: 20),
+  //                 ElevatedButton(
+  //                   onPressed: () async {
+  //                     Navigator.pop(context);
+  //                     await _markWorkCompleted(bookingId);
+  //                   },
+  //                   style: ElevatedButton.styleFrom(
+  //                     backgroundColor: kPrimary,
+  //                     foregroundColor: Colors.white,
+  //                   ),
+  //                   child: const Text("Work Completed"),
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(
+  //       // ignore: use_build_context_synchronously
+  //       context,
+  //     ).showSnackBar(SnackBar(content: Text("Error: $e")));
+  //   }
+  // }
 
   Future<void> fetchAcceptedBookings() async {
     final url =
@@ -1186,18 +1193,21 @@ class _AcceptedBookingScreenState extends State<AcceptedBookingScreen> {
       );
 
       if (response.statusCode == 200) {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Work marked as Completed")),
         );
 
         await fetchAcceptedBookings();
       } else {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Failed: ${response.statusCode}")),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(
+        // ignore: use_build_context_synchronously
         context,
       ).showSnackBar(SnackBar(content: Text("Error: $e")));
     }
@@ -1258,6 +1268,7 @@ class _AcceptedBookingScreenState extends State<AcceptedBookingScreen> {
         border: Border.all(color: kCardBorder),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.06),
             blurRadius: 20,
             offset: const Offset(0, 10),
@@ -1473,6 +1484,7 @@ class _RejectedBookingScreenState extends State<RejectedBookingScreen> {
         border: Border.all(color: kCardBorder),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.06),
             blurRadius: 20,
             offset: const Offset(0, 10),

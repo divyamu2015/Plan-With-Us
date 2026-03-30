@@ -4,7 +4,6 @@ import 'package:house_construction_pro/purchase_screen/add_cart/add_cart_view.da
 import 'package:house_construction_pro/purchase_screen/payment.dart';
 import 'package:house_construction_pro/purchase_screen/view_each_pro/view_each_pro_model.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final int productId;
@@ -95,6 +94,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         cartId = jsonMap["cart_item"]["id"];
 
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Item added to cart!'),
@@ -102,6 +102,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           ),
         );
       } else {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -112,6 +113,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         );
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Error: Could not add item to cart'),
@@ -149,12 +151,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         bookingId = jsonMap["data"]["id"];
 
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Processing Successfully'),
             backgroundColor: Colors.green,
           ),
         );
+        // ignore: use_build_context_synchronously
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) {
@@ -168,6 +172,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           ),
         );
       } else {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -178,6 +183,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         );
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Error: Could not add item to cart'),
@@ -286,6 +292,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           child: Container(
                             width: 70,
                             height: 1.2,
+                            // ignore: deprecated_member_use
                             color: kGold.withOpacity(0.8),
                           ),
                         ),
@@ -304,6 +311,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               borderRadius: BorderRadius.circular(30),
                               gradient: LinearGradient(
                                 colors: [
+                                  // ignore: deprecated_member_use
                                   Colors.blueGrey.shade900.withOpacity(0.30),
                                   const Color(0xFF111111),
                                   const Color(0xFF090909),
@@ -312,16 +320,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 end: Alignment.bottomCenter,
                               ),
                               border: Border.all(
+                                // ignore: deprecated_member_use
                                 color: kGold.withOpacity(0.25),
                                 width: 0.9,
                               ),
                               boxShadow: [
                                 BoxShadow(
+                                  // ignore: deprecated_member_use
                                   color: Colors.black.withOpacity(0.45),
                                   blurRadius: 26,
                                   offset: const Offset(0, 18),
                                 ),
                                 BoxShadow(
+                                  // ignore: deprecated_member_use
                                   color: kGold.withOpacity(0.06),
                                   blurRadius: 36,
                                   spreadRadius: 1,
@@ -454,6 +465,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         Text(
                           product!.description,
                           style: TextStyle(
+                            // ignore: deprecated_member_use
                             color: kSubText.withOpacity(0.95),
                             fontSize: 14,
                             height: 1.7,
@@ -479,6 +491,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         Text(
                           "Stock strength indicator",
                           style: TextStyle(
+                            // ignore: deprecated_member_use
                             color: kMuted.withOpacity(0.85),
                             fontSize: 11,
                           ),
@@ -492,6 +505,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               child: OutlinedButton(
                                 style: OutlinedButton.styleFrom(
                                   side: BorderSide(
+                                    // ignore: deprecated_member_use
                                     color: kGold.withOpacity(0.95),
                                     width: 1.2,
                                   ),
@@ -507,6 +521,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
                                   if (cartId == null) return;
 
+                                  // ignore: use_build_context_synchronously
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) => CartScreen(
@@ -571,9 +586,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         height: 40,
         width: 40,
         decoration: BoxDecoration(
+          // ignore: deprecated_member_use
           color: kGold.withOpacity(0.08),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
+            // ignore: deprecated_member_use
             color: kGold.withOpacity(0.22),
           ),
         ),

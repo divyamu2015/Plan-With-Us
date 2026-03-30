@@ -39,8 +39,8 @@ class _ViewEngineersProfileState extends State<ViewEngineersProfile> {
       TextEditingController();
   final TextEditingController totalAmountController = TextEditingController();
   final TextEditingController timeDurationController = TextEditingController();
-  final GlobalKey<FormState> _fromKey = GlobalKey<FormState>();
-  bool _showAmountDetails = false;
+ // final GlobalKey<FormState> _fromKey = GlobalKey<FormState>();
+ // bool _showAmountDetails = false;
   final List<Feature> _features = [];
   String? profileImageUrl;
   List<String> workProofImageUrls = [];
@@ -62,7 +62,7 @@ class _ViewEngineersProfileState extends State<ViewEngineersProfile> {
     workId = widget.workId;
     userId = widget.userId;
     requestId = widget.requestId;
-    print('requestId====== $requestId');
+  //  print('requestId====== $requestId');
     //  print('Engineer ID in View Engineers Profile: $engineerId');
     // print('Cent in View Engineers Profile: $cent');
     // print('Work ID in View Engineers Profile: $workId');
@@ -173,11 +173,11 @@ class _ViewEngineersProfileState extends State<ViewEngineersProfile> {
     }
   }
 
-  void _toggleAmountDetails() {
-    setState(() {
-      _showAmountDetails = !_showAmountDetails;
-    });
-  }
+  // void _toggleAmountDetails() {
+  //   setState(() {
+  //     _showAmountDetails = !_showAmountDetails;
+  //   });
+  // }
 
   Widget _buildFeatureCard(Feature feature) {
     return Container(
@@ -506,175 +506,175 @@ Widget _buildFinanceRow(String title, String value, {bool highlight = false}) {
     ],
   );
 }
-  Widget _buildForm() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Form(
-        key: _fromKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(child: _buildProfileImagePicker()),
-            const SizedBox(height: 15),
-            Center(
-              child: Text(
-                projectNameController.text.toUpperCase(),
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-              ),
-            ),
-            const SizedBox(height: 30),
-            TextFormField(
-              controller: engineerNameController,
-              decoration: const InputDecoration(
-                labelText: 'Engineer Name',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 15),
-            TextFormField(
-              controller: centController,
-              decoration: const InputDecoration(
-                labelText: 'Cent',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 15),
-            TextFormField(
-              controller: sqrftController,
-              decoration: const InputDecoration(
-                labelText: 'Square Feet',
-                border: OutlineInputBorder(),
-              ),
-              readOnly: true,
-            ),
-            const SizedBox(height: 15),
-            InkWell(
-              onTap: _toggleAmountDetails,
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.blue.shade50,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Amount Details',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    Icon(
-                      _showAmountDetails
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_down,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            if (_showAmountDetails) ...[
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: expectedAmountController,
-                decoration: const InputDecoration(
-                  labelText: 'Expected Amount',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: additionalAmountController,
-                decoration: const InputDecoration(
-                  labelText: 'Additional Amount',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: totalAmountController,
-                decoration: const InputDecoration(
-                  labelText: 'Total Amount',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ],
-            const SizedBox(height: 30),
-            Text(
-              'Additional Features:',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: const Color.fromARGB(255, 72, 5, 83),
-              ),
-            ),
-            const SizedBox(height: 15),
-            SizedBox(
-              height: 150,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _features.length,
-                itemBuilder: (context, index) {
-                  return _buildFeatureCard(_features[index]);
-                },
-              ),
-            ),
-            const SizedBox(height: 30),
-            TextFormField(
-              controller: timeDurationController,
-              decoration: const InputDecoration(
-                labelText: 'Time Duration',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 30),
-            Center(
-              child: ElevatedButton.icon(
-                icon: const Icon(Icons.cloud_upload),
-                label: const Text(
-                  'Interested',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                onPressed: _requestDetails,
-                // () {
-                // if (_fromKey.currentState!.validate()) {
-                //  _requestDetails();
-                // }
-                // ScaffoldMessenger.of(context).showSnackBar(
-                //   const SnackBar(
-                //     content: Text('Registration successful!'),
-                //     backgroundColor: Colors.green,
-                //   ),
-                // );
-                // Navigator.pop(context);
-                // },
-                // () {
+  // Widget _buildForm() {
+  //   return SingleChildScrollView(
+  //     padding: const EdgeInsets.all(16),
+  //     child: Form(
+  //       key: _fromKey,
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Center(child: _buildProfileImagePicker()),
+  //           const SizedBox(height: 15),
+  //           Center(
+  //             child: Text(
+  //               projectNameController.text.toUpperCase(),
+  //               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+  //             ),
+  //           ),
+  //           const SizedBox(height: 30),
+  //           TextFormField(
+  //             controller: engineerNameController,
+  //             decoration: const InputDecoration(
+  //               labelText: 'Engineer Name',
+  //               border: OutlineInputBorder(),
+  //             ),
+  //           ),
+  //           const SizedBox(height: 15),
+  //           TextFormField(
+  //             controller: centController,
+  //             decoration: const InputDecoration(
+  //               labelText: 'Cent',
+  //               border: OutlineInputBorder(),
+  //             ),
+  //           ),
+  //           const SizedBox(height: 15),
+  //           TextFormField(
+  //             controller: sqrftController,
+  //             decoration: const InputDecoration(
+  //               labelText: 'Square Feet',
+  //               border: OutlineInputBorder(),
+  //             ),
+  //             readOnly: true,
+  //           ),
+  //           const SizedBox(height: 15),
+  //           InkWell(
+  //             onTap: _toggleAmountDetails,
+  //             child: Container(
+  //               padding: const EdgeInsets.all(12),
+  //               decoration: BoxDecoration(
+  //                 borderRadius: BorderRadius.circular(10),
+  //                 color: Colors.blue.shade50,
+  //               ),
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   const Text(
+  //                     'Amount Details',
+  //                     style: TextStyle(
+  //                       fontWeight: FontWeight.bold,
+  //                       fontSize: 16,
+  //                     ),
+  //                   ),
+  //                   Icon(
+  //                     _showAmountDetails
+  //                         ? Icons.keyboard_arrow_up
+  //                         : Icons.keyboard_arrow_down,
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //           if (_showAmountDetails) ...[
+  //             const SizedBox(height: 10),
+  //             TextFormField(
+  //               controller: expectedAmountController,
+  //               decoration: const InputDecoration(
+  //                 labelText: 'Expected Amount',
+  //                 border: OutlineInputBorder(),
+  //               ),
+  //             ),
+  //             const SizedBox(height: 10),
+  //             TextFormField(
+  //               controller: additionalAmountController,
+  //               decoration: const InputDecoration(
+  //                 labelText: 'Additional Amount',
+  //                 border: OutlineInputBorder(),
+  //               ),
+  //             ),
+  //             const SizedBox(height: 10),
+  //             TextFormField(
+  //               controller: totalAmountController,
+  //               decoration: const InputDecoration(
+  //                 labelText: 'Total Amount',
+  //                 border: OutlineInputBorder(),
+  //               ),
+  //             ),
+  //           ],
+  //           const SizedBox(height: 30),
+  //           Text(
+  //             'Additional Features:',
+  //             style: TextStyle(
+  //               fontSize: 18,
+  //               fontWeight: FontWeight.bold,
+  //               color: const Color.fromARGB(255, 72, 5, 83),
+  //             ),
+  //           ),
+  //           const SizedBox(height: 15),
+  //           SizedBox(
+  //             height: 150,
+  //             child: ListView.builder(
+  //               scrollDirection: Axis.horizontal,
+  //               itemCount: _features.length,
+  //               itemBuilder: (context, index) {
+  //                 return _buildFeatureCard(_features[index]);
+  //               },
+  //             ),
+  //           ),
+  //           const SizedBox(height: 30),
+  //           TextFormField(
+  //             controller: timeDurationController,
+  //             decoration: const InputDecoration(
+  //               labelText: 'Time Duration',
+  //               border: OutlineInputBorder(),
+  //             ),
+  //           ),
+  //           const SizedBox(height: 30),
+  //           Center(
+  //             child: ElevatedButton.icon(
+  //               icon: const Icon(Icons.cloud_upload),
+  //               label: const Text(
+  //                 'Interested',
+  //                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+  //               ),
+  //               onPressed: _requestDetails,
+  //               // () {
+  //               // if (_fromKey.currentState!.validate()) {
+  //               //  _requestDetails();
+  //               // }
+  //               // ScaffoldMessenger.of(context).showSnackBar(
+  //               //   const SnackBar(
+  //               //     content: Text('Registration successful!'),
+  //               //     backgroundColor: Colors.green,
+  //               //   ),
+  //               // );
+  //               // Navigator.pop(context);
+  //               // },
+  //               // () {
 
-                //   ScaffoldMessenger.of(context).showSnackBar(
-                //     const SnackBar(
-                //       content: Text('Booking functionality not implemented.'),
-                //     ),
-                //   );
-                // },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 153, 197, 223),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 15,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  //               //   ScaffoldMessenger.of(context).showSnackBar(
+  //               //     const SnackBar(
+  //               //       content: Text('Booking functionality not implemented.'),
+  //               //     ),
+  //               //   );
+  //               // },
+  //               style: ElevatedButton.styleFrom(
+  //                 backgroundColor: const Color.fromARGB(255, 153, 197, 223),
+  //                 padding: const EdgeInsets.symmetric(
+  //                   horizontal: 30,
+  //                   vertical: 15,
+  //                 ),
+  //                 shape: RoundedRectangleBorder(
+  //                   borderRadius: BorderRadius.circular(30),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {

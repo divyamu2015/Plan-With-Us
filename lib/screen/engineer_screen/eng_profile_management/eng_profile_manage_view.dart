@@ -37,7 +37,6 @@ class _EngProfileManagementScreenState
 
   // Light theme colors to match screenshot
   static const Color kPageBg = Color(0xFFF4F5F7);
-  static const Color kCardBg = Colors.white;
   static const Color kBorder = Color(0xFFDCE2EA);
   static const Color kPrimaryText = Color(0xFF0F172A);
   static const Color kSecondaryText = Color(0xFF64748B);
@@ -219,6 +218,7 @@ class _EngProfileManagementScreenState
                 color: Colors.black,
                 boxShadow: [
                   BoxShadow(
+                    // ignore: deprecated_member_use
                     color: Colors.black.withOpacity(0.12),
                     blurRadius: 18,
                     offset: const Offset(0, 8),
@@ -543,6 +543,7 @@ class _EngProfileManagementScreenState
                 backgroundColor: kAccent,
                 foregroundColor: Colors.white,
                 elevation: 6,
+                // ignore: deprecated_member_use
                 shadowColor: kAccent.withOpacity(0.25),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18),

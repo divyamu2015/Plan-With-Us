@@ -54,6 +54,7 @@ class _EngineerRequestDetailsPageState
     );
 
     if (response.statusCode == 200) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Work marked as completed")),
       );
@@ -70,18 +71,22 @@ class _EngineerRequestDetailsPageState
     borderRadius: BorderRadius.circular(28),
     gradient: LinearGradient(
       colors: [
+       // ignore: deprecated_member_use
        const Color.fromARGB(255, 16, 75, 54).withOpacity(0.98),
+     // ignore: deprecated_member_use
      const Color.fromARGB(255, 16, 75, 54).withOpacity(0.98),
       ],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
     border: Border.all(
+      // ignore: deprecated_member_use
       color: Colors.white.withOpacity(0.10),
       width: 1.2,
     ),
     boxShadow: [
       BoxShadow(
+        // ignore: deprecated_member_use
         color: Colors.black.withOpacity(0.28),
         blurRadius: 28,
         offset: const Offset(0, 14),
@@ -407,39 +412,39 @@ class _EngineerRequestDetailsPageState
     );
   }
 
-  Widget _buildSuggestionCard() {
-    final suggestion = bookingData?["suggestion"];
+  // Widget _buildSuggestionCard() {
+  //   final suggestion = bookingData?["suggestion"];
 
-    if (suggestion == null || suggestion.toString().isEmpty) {
-      return const SizedBox();
-    }
+  //   if (suggestion == null || suggestion.toString().isEmpty) {
+  //     return const SizedBox();
+  //   }
 
-    return Container(
-      width: double.infinity,
-      decoration: _cardDecoration(),
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-            child: Image.network(
-              "$baseUrl${bookingData?["suggestion"]}",
-              height: 180,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.all(12),
-            child: Text(
-              "Engineer Suggestion",
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
+  //   return Container(
+  //     width: double.infinity,
+  //     decoration: _cardDecoration(),
+  //     child: Column(
+  //       children: [
+  //         ClipRRect(
+  //           borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+  //           child: Image.network(
+  //             "$baseUrl${bookingData?["suggestion"]}",
+  //             height: 180,
+  //             width: double.infinity,
+  //             fit: BoxFit.cover,
+  //           ),
+  //         ),
+  //         const Padding(
+  //           padding: EdgeInsets.all(12),
+  //           child: Text(
+  //             "Engineer Suggestion",
+  //             style: TextStyle(
+  //               fontWeight: FontWeight.w600,
+  //               color: Colors.white,
+  //             ),
+  //           ),
+  //         )
+  //       ],
+  //     ),
+  //   );
+  // }
 }

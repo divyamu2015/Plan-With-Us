@@ -214,6 +214,7 @@ class _CardPaymentPageState extends State<CardPaymentPage> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(18.r),
+        // ignore: deprecated_member_use
         borderSide: BorderSide(color: kGold.withOpacity(0.9), width: 1.2),
       ),
       errorBorder: OutlineInputBorder(
@@ -324,6 +325,7 @@ class _CardPaymentPageState extends State<CardPaymentPage> {
               child: Container(
                 width: 70.w,
                 height: 1.2,
+                // ignore: deprecated_member_use
                 color: kGold.withOpacity(0.75),
               ),
             ),
@@ -344,15 +346,18 @@ class _CardPaymentPageState extends State<CardPaymentPage> {
                   end: Alignment.bottomRight,
                 ),
                 border: Border.all(
+                  // ignore: deprecated_member_use
                   color: kGold.withOpacity(0.18),
                 ),
                 boxShadow: [
                   BoxShadow(
+                    // ignore: deprecated_member_use
                     color: Colors.black.withOpacity(0.38),
                     blurRadius: 28,
                     offset: const Offset(0, 16),
                   ),
                   BoxShadow(
+                    // ignore: deprecated_member_use
                     color: kGold.withOpacity(0.04),
                     blurRadius: 30,
                     spreadRadius: 1,
@@ -366,8 +371,10 @@ class _CardPaymentPageState extends State<CardPaymentPage> {
                     width: 72.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
+                      // ignore: deprecated_member_use
                       color: kGold.withOpacity(0.10),
                       border: Border.all(
+                        // ignore: deprecated_member_use
                         color: kGold.withOpacity(0.25),
                       ),
                     ),

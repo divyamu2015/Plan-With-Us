@@ -59,6 +59,7 @@ class _CashPaymentPageState extends State<CashPaymentPage> {
   Future<void> _showOrderDialog(BuildContext context) async {
     return showDialog(
       context: context,
+      // ignore: deprecated_member_use
       barrierColor: Colors.black.withOpacity(0.65),
       builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
@@ -67,14 +68,17 @@ class _CashPaymentPageState extends State<CashPaymentPage> {
           decoration: BoxDecoration(
             color: kCard2,
             borderRadius: BorderRadius.circular(28.r),
+            // ignore: deprecated_member_use
             border: Border.all(color: kGold.withOpacity(0.16)),
             boxShadow: [
               BoxShadow(
+                // ignore: deprecated_member_use
                 color: Colors.black.withOpacity(0.45),
                 blurRadius: 30,
                 offset: const Offset(0, 16),
               ),
               BoxShadow(
+                // ignore: deprecated_member_use
                 color: kGold.withOpacity(0.05),
                 blurRadius: 24,
                 spreadRadius: 1,
@@ -89,7 +93,9 @@ class _CashPaymentPageState extends State<CashPaymentPage> {
                 width: 58.w,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
+                  // ignore: deprecated_member_use
                   color: kGold.withOpacity(0.12),
+                  // ignore: deprecated_member_use
                   border: Border.all(color: kGold.withOpacity(0.22)),
                 ),
                 child: Icon(
@@ -135,6 +141,7 @@ class _CashPaymentPageState extends State<CashPaymentPage> {
                     Future.delayed(const Duration(milliseconds: 250), () {
                       if (mounted) {
                         Navigator.push(
+                          // ignore: use_build_context_synchronously
                           context,
                           MaterialPageRoute(
                             builder: (context) {
@@ -197,6 +204,7 @@ class _CashPaymentPageState extends State<CashPaymentPage> {
           showSuccess("Payment Successful! Redirecting...");
           Future.delayed(const Duration(seconds: 1), () {
             if (mounted) {
+              // ignore: use_build_context_synchronously
               _showOrderDialog(context);
             }
           });
@@ -246,6 +254,7 @@ class _CashPaymentPageState extends State<CashPaymentPage> {
           showSuccess("Payment Successful! Redirecting...");
           Future.delayed(const Duration(seconds: 1), () {
             if (mounted) {
+              // ignore: use_build_context_synchronously
               _showOrderDialog(context);
             }
           });
@@ -347,6 +356,7 @@ class _CashPaymentPageState extends State<CashPaymentPage> {
                 child: Container(
                   width: 70.w,
                   height: 1.2,
+                  // ignore: deprecated_member_use
                   color: kGold.withOpacity(0.75),
                 ),
               ),
@@ -367,15 +377,18 @@ class _CashPaymentPageState extends State<CashPaymentPage> {
                     end: Alignment.bottomRight,
                   ),
                   border: Border.all(
+                    // ignore: deprecated_member_use
                     color: kGold.withOpacity(0.18),
                   ),
                   boxShadow: [
                     BoxShadow(
+                      // ignore: deprecated_member_use
                       color: Colors.black.withOpacity(0.38),
                       blurRadius: 28,
                       offset: const Offset(0, 16),
                     ),
                     BoxShadow(
+                      // ignore: deprecated_member_use
                       color: kGold.withOpacity(0.04),
                       blurRadius: 30,
                       spreadRadius: 1,
@@ -389,8 +402,10 @@ class _CashPaymentPageState extends State<CashPaymentPage> {
                       width: 76.w,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
+                        // ignore: deprecated_member_use
                         color: kGold.withOpacity(0.10),
                         border: Border.all(
+                          // ignore: deprecated_member_use
                           color: kGold.withOpacity(0.24),
                         ),
                       ),
@@ -465,8 +480,10 @@ class _CashPaymentPageState extends State<CashPaymentPage> {
                       width: 46.w,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
+                        // ignore: deprecated_member_use
                         color: kGold.withOpacity(0.10),
                         border: Border.all(
+                          // ignore: deprecated_member_use
                           color: kGold.withOpacity(0.22),
                         ),
                       ),

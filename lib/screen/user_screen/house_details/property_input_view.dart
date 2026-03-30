@@ -182,7 +182,6 @@ class _PropertyInputPageState extends State<PropertyInputPage> {
                   requestId = await getRequestId();
                 }
                 if (response.matchedWorks.isNotEmpty) {
-                  final work = response.matchedWorks.first;
                 }
                 setState(() => isLoading = false);
 
@@ -294,11 +293,13 @@ class _PropertyInputPageState extends State<PropertyInputPage> {
                             borderRadius: BorderRadius.circular(25),
                             color: Colors.white,
                             border: Border.all(
+                              // ignore: deprecated_member_use
                               color: const Color(0xFFF2D00D).withOpacity(0.3),
                               width: 1.5,
                             ),
                             boxShadow: [
                               BoxShadow(
+                                // ignore: deprecated_member_use
                                 color: Colors.black.withOpacity(0.15),
                                 blurRadius: 25,
                                 offset: const Offset(0, 12),
