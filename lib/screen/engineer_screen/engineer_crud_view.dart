@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:house_construction_pro/constant_page.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 
 class ProjectDetailsPage extends StatefulWidget {
   final int workId;
@@ -14,145 +12,166 @@ class ProjectDetailsPage extends StatefulWidget {
 }
 
 class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
-  //final String baseUrl = "https://417sptdw-8001.inc1.devtunnels.ms";
-
   Map<String, dynamic>? work;
   bool isLoading = true;
+  bool isEditing = false;
+  bool isUpdating = false;
+
   int currentImage = 0;
-  PageController pageController = PageController();
-File? selectedPropertyImage;
-File? selectedWorkProofImage;
-final ImagePicker picker = ImagePicker();
- 
- // bool isEditing = false;
+  final PageController pageController = PageController();
 
   final TextEditingController projectNameController = TextEditingController();
   final TextEditingController categoryController = TextEditingController();
+  final TextEditingController centController = TextEditingController();
+  final TextEditingController squarefeetController = TextEditingController();
+  final TextEditingController timeDurationController = TextEditingController();
+  final TextEditingController expectedAmountController = TextEditingController();
   final TextEditingController additionalAmountController =
       TextEditingController();
-  final TextEditingController totalAmountController =
-      TextEditingController();
+  final TextEditingController totalAmountController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     fetchWork();
   }
 
-  Future<void> fetchWork() async {
-    final response = await http.get(
-      Uri.parse("$baseUri/userapp/engineer/works/${widget.workId}/"),
-    );
+  @override
+  void dispose() {
+    pageController.dispose();
+    projectNameController.dispose();
+    categoryController.dispose();
+    centController.dispose();
+    squarefeetController.dispose();
+    timeDurationController.dispose();
+    expectedAmountController.dispose();
+    additionalAmountController.dispose();
+    totalAmountController.dispose();
+    super.dispose();
+  }
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      setState(() {
-        work = data["data"][0];
-        isLoading = false;
-      });
+  Future<void> fetchWork() async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUri/userapp/engineer/works/${widget.workId}/"),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final fetchedWork = data["data"][0];
+
+        setState(() {
+          work = fetchedWork;
+
+          projectNameController.text =
+              fetchedWork["project_name"]?.toString() ?? "";
+          categoryController.text = fetchedWork["category"]?.toString() ?? "";
+          centController.text = fetchedWork["cent"]?.toString() ?? "";
+          squarefeetController.text =
+              fetchedWork["squarefeet"]?.toString() ?? "";
+          timeDurationController.text =
+              fetchedWork["time_duration"]?.toString() ?? "";
+          expectedAmountController.text =
+              fetchedWork["expected_amount"]?.toString() ?? "";
+          additionalAmountController.text =
+              fetchedWork["additional_amount"]?.toString() ?? "";
+          totalAmountController.text =
+              fetchedWork["total_amount"]?.toString() ?? "";
+
+          isLoading = false;
+        });
+      } else {
+        setState(() => isLoading = false);
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
     }
   }
 
   Future<void> updateWork() async {
-  if (work == null) return;
+    if (work == null) return;
 
-  var request = http.MultipartRequest(
-    "PATCH",
-    Uri.parse("$baseUri/userapp/engineer/work/update/${widget.workId}/"),
-  );
+    setState(() => isUpdating = true);
 
-  final newProjectName = projectNameController.text.trim();
-  final newCategory = categoryController.text.trim();
-  final newAdditionalAmount = additionalAmountController.text.trim();
-  final newTotalAmount = totalAmountController.text.trim();
+    try {
+      final request = http.MultipartRequest(
+        "PATCH",
+        Uri.parse("$baseUri/userapp/engineer/work/update/${widget.workId}/"),
+      );
 
-  if (newProjectName != (work?["project_name"]?.toString() ?? "")) {
-    request.fields["project_name"] = newProjectName;
-  }
+      void addIfChanged(String key, TextEditingController controller) {
+        final newValue = controller.text.trim();
+        final oldValue = work?[key]?.toString() ?? "";
+        if (newValue != oldValue) {
+          request.fields[key] = newValue;
+        }
+      }
 
-  if (newCategory != (work?["category"]?.toString() ?? "")) {
-    request.fields["category"] = newCategory;
-  }
+      addIfChanged("project_name", projectNameController);
+      addIfChanged("category", categoryController);
+      addIfChanged("cent", centController);
+      addIfChanged("squarefeet", squarefeetController);
+      addIfChanged("time_duration", timeDurationController);
+      addIfChanged("expected_amount", expectedAmountController);
+      addIfChanged("additional_amount", additionalAmountController);
+      addIfChanged("total_amount", totalAmountController);
 
-  if (newAdditionalAmount != (work?["additional_amount"]?.toString() ?? "")) {
-    request.fields["additional_amount"] = newAdditionalAmount;
-  }
+      if (request.fields.isEmpty) {
+        setState(() => isUpdating = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("No changes made")),
+        );
+        return;
+      }
 
-  if (newTotalAmount != (work?["total_amount"]?.toString() ?? "")) {
-    request.fields["total_amount"] = newTotalAmount;
-  }
+      final response = await request.send();
+      final body = await response.stream.bytesToString();
 
-  if (request.fields.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("No changes made")),
-    );
-    return;
-  }
+      setState(() => isUpdating = false);
 
-  var response = await request.send();
+      if (!mounted) return;
 
-  if (!mounted) return;
-
-  if (response.statusCode == 200) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Updated Successfully")),
-    );
-    Navigator.pop(context, true);
-  } else {
-    final responseBody = await response.stream.bytesToString();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("Update failed: ${response.statusCode} $responseBody"),
-      ),
-    );
-  }
-}
-  Future<void> deleteWork() async {
-    final response = await http.delete(
-      Uri.parse("$baseUri/userapp/engineer/works/${widget.workId}/"),
-    );
-
-    if (response.statusCode == 204 && mounted) {
-      Navigator.pop(context);
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Updated Successfully")),
+        );
+        Navigator.pop(context, true);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Update failed: ${response.statusCode} $body"),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() => isUpdating = false);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
     }
   }
- 
 
-  @override
-  Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
-    final images = work?["images"] as List? ?? [];
-final propertyImage=work?["property_image"];
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F7F6),
-      body: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 120),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildPropertyImage(propertyImage),
-                  _buildTitleSection(),
-                  _buildQuickStats(),
-                  _buildFinancialCard(),
-                  _buildFeatures(),
-                  const SizedBox(height: 15),
-                  Text('WORK PROOF',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17.0),),
-                    const SizedBox(height: 10),
-                  _buildImageSlider(images),
-                ],
-              ),
-            ),
-            _buildTopBar(),
-          ],
+  Widget _editableField({
+    required String label,
+    required TextEditingController controller,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        decoration: InputDecoration(
+          labelText: label,
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide.none,
+          ),
         ),
       ),
-      bottomNavigationBar: _buildActionButtons(),
     );
   }
 
@@ -162,202 +181,74 @@ final propertyImage=work?["property_image"];
       left: 16,
       right: 16,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _circleIcon(Icons.arrow_back, () => Navigator.pop(context)),
-          //  _circleIcon(Icons.share, () {}),
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.arrow_back, color: Colors.black87),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _circleIcon(IconData icon, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(icon, color: Colors.black87),
-      ),
-    );
-  }
-Widget _buildImageSlider(List images) {
-  return SizedBox(
-    height: 300,
-    child: Stack(
-      children: [
-        PageView.builder(
-          controller: pageController,
-          itemCount: images.length,
-          onPageChanged: (index) {
-            setState(() => currentImage = index);
-          },
-          itemBuilder: (context, index) {
-            return Stack(
-              children: [
-                Image.network(
-                  "$imageUrl${images[index]}",
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                ),
-
-                /// ❌ Delete image button
-                // Positioned(
-                //   top: 16,
-                //   right: 16,
-                //   child: _circleActionIcon(Icons.close, () {
-                // //    _deleteWorkProofImage(index);
-                //   }),
-                // ),
-              ],
-            );
-          },
-        ),
-
-        // /// ➕ Add Image Button
-        // Positioned(
-        //   bottom: 16,
-        //   right: 16,
-        //   child: FloatingActionButton(
-        //     mini: true,
-        //     backgroundColor: const Color(0xFFEEBD2B),
-        //     onPressed: _pickWorkProofImage,
-        //     child: const Icon(Icons.add),
-        //   ),
-        // ),
-      ],
-    ),
-  );
-}
-Future<void> _pickWorkProofImage() async {
-  final XFile? image =
-      await picker.pickImage(source: ImageSource.gallery);
-
-  if (image != null) {
-    File file = File(image.path);
-
-    await updateWorkWithImage(
-      imageFile: file,
-    );
-  }
-}
-
-Future<void> updateWorkWithImage({
-  String? additionalAmount,
-  String? totalAmount,
-  File? imageFile,
-}) async {
-  var request = http.MultipartRequest(
-    "PATCH",
-    Uri.parse(
-        "$baseUri/userapp/engineer/work/update/${widget.workId}/"),
-  );
-
-  // Add text fields
-  if (additionalAmount != null) {
-    request.fields["additional_amount"] = additionalAmount;
-  }
-
-  if (totalAmount != null) {
-    request.fields["total_amount"] = totalAmount;
-  }
-
-  // Add image file
-  if (imageFile != null) {
-    request.files.add(
-      await http.MultipartFile.fromPath(
-        "images", // must match Django field name
-        imageFile.path,
-      ),
-    );
-  }
-
-  var response = await request.send();
-
-  if (response.statusCode == 200) {
-    // ignore: use_build_context_synchronously
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Work updated successfully")),
-    );
-    fetchWork(); // refresh page
-  } else {
-    // ignore: use_build_context_synchronously
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Update failed")),
-    );
-  }
-}
-
- Widget _buildPropertyImage(String? propertyImage) {
-  return SizedBox(
-    height: 300,
-    child: Stack(
-      children: [
-        propertyImage != null
-            ? Image.network(
-                "$imageUrl$propertyImage",
-                width: double.infinity,
-                fit: BoxFit.cover,
-              )
-            : Container(
+  Widget _buildPropertyImage(String? propertyImage) {
+    return SizedBox(
+      height: 300,
+      width: double.infinity,
+      child: propertyImage != null
+          ? Image.network(
+              "$imageUrl$propertyImage",
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
                 color: Colors.grey.shade300,
                 child: const Center(child: Text("No Property Image")),
               ),
-
-        /// 🔙 Back button already handled in top bar
-
-        /// ✏ Edit Button
-        // Positioned(
-        //   top: 50,
-        //   right: 60,
-        //   child: _circleActionIcon(Icons.edit, () {
-        //     _pickPropertyImage();
-        //   }),
-        // ),
-
-        /// ❌ Delete Button
-        // Positioned(
-        //   top: 50,
-        //   right: 16,
-        //   child: _circleActionIcon(Icons.close, () {
-        //   //  _deletePropertyImage();
-        //   }),
-        // ),
-      ],
-    ),
-  );
-}
-// Future<void> _pickPropertyImage() async {
-//   final XFile? image =
-//       await picker.pickImage(source: ImageSource.gallery);
-
-//   if (image != null) {
-//     File file = File(image.path);
-
-//     await updateWorkWithImage(
-//       imageFile: file,
-//     );
-//   }
-// }
-
-// Widget _circleActionIcon(IconData icon, VoidCallback onTap) {
-//   return GestureDetector(
-//     onTap: onTap,
-//     child: Container(
-//       padding: const EdgeInsets.all(8),
-//       decoration: const BoxDecoration(
-//         color: Colors.white,
-//         shape: BoxShape.circle,
-//       ),
-//       child: Icon(icon, size: 20, color: Colors.black87),
-//     ),
-//   );
-// }
+            )
+          : Container(
+              color: Colors.grey.shade300,
+              child: const Center(child: Text("No Property Image")),
+            ),
+    );
+  }
 
   Widget _buildTitleSection() {
+    final engineerName = work?["engineer"]?.toString() ?? "";
+
+    if (isEditing) {
+      return Column(
+        children: [
+          _editableField(
+            label: "Project Name",
+            controller: projectNameController,
+          ),
+          _editableField(
+            label: "Category",
+            controller: categoryController,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                engineerName,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Row(
@@ -367,7 +258,7 @@ Future<void> updateWorkWithImage({
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                work?["project_name"] ?? "",
+                projectNameController.text,
                 style: const TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
@@ -375,7 +266,7 @@ Future<void> updateWorkWithImage({
               ),
               const SizedBox(height: 4),
               Text(
-                work?["category"] ?? "",
+                categoryController.text,
                 style: const TextStyle(
                   color: Color(0xFFEEBD2B),
                   fontWeight: FontWeight.w600,
@@ -383,29 +274,44 @@ Future<void> updateWorkWithImage({
               ),
             ],
           ),
-          Column(
-            children: [
-             // const CircleAvatar(radius: 22),
-              const SizedBox(height: 6),
-              Text(
-                work?["engineer"] ?? "",
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
+          Text(
+            engineerName,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildQuickStats() {
+  Widget _buildQuickStatsOrFields() {
+    if (isEditing) {
+      return Column(
+        children: [
+          _editableField(
+            label: "Area (Cent)",
+            controller: centController,
+            keyboardType: TextInputType.number,
+          ),
+          _editableField(
+            label: "Total Sqft",
+            controller: squarefeetController,
+            keyboardType: TextInputType.number,
+          ),
+          _editableField(
+            label: "Duration",
+            controller: timeDurationController,
+          ),
+        ],
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
-          _statCard("Area", "${work?["cent"]} Cent"),
-          _statCard("Total Sqft", work?["squarefeet"] ?? ""),
-          _statCard("Duration", work?["time_duration"] ?? ""),
+          _statCard("Area", "${centController.text} Cent"),
+          _statCard("Total Sqft", squarefeetController.text),
+          _statCard("Duration", timeDurationController.text),
         ],
       ),
     );
@@ -421,13 +327,13 @@ Future<void> updateWorkWithImage({
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 6),
-              Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                value,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ],
           ),
         ),
@@ -435,7 +341,29 @@ Future<void> updateWorkWithImage({
     );
   }
 
-  Widget _buildFinancialCard() {
+  Widget _buildFinancialSection() {
+    if (isEditing) {
+      return Column(
+        children: [
+          _editableField(
+            label: "Expected Amount",
+            controller: expectedAmountController,
+            keyboardType: TextInputType.number,
+          ),
+          _editableField(
+            label: "Additional Amount",
+            controller: additionalAmountController,
+            keyboardType: TextInputType.number,
+          ),
+          _editableField(
+            label: "Total Budget",
+            controller: totalAmountController,
+            keyboardType: TextInputType.number,
+          ),
+        ],
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Container(
@@ -446,10 +374,10 @@ Future<void> updateWorkWithImage({
         ),
         child: Column(
           children: [
-            _financeRow("Expected Amount", work?["expected_amount"]),
-            _financeRow("Additional Amount", work?["additional_amount"]),
+            _financeRow("Expected Amount", expectedAmountController.text),
+            _financeRow("Additional Amount", additionalAmountController.text),
             const Divider(height: 30),
-            _financeRow("Total Budget", work?["total_amount"], isTotal: true),
+            _financeRow("Total Budget", totalAmountController.text, isTotal: true),
           ],
         ),
       ),
@@ -483,7 +411,6 @@ Future<void> updateWorkWithImage({
 
   Widget _buildFeatures() {
     final features = work?["additional_features"] as List? ?? [];
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Wrap(
@@ -492,12 +419,8 @@ Future<void> updateWorkWithImage({
         children: features
             .map(
               (f) => Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 8,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  // ignore: deprecated_member_use
                   color: const Color(0xFFEEBD2B).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -515,30 +438,129 @@ Future<void> updateWorkWithImage({
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildImageSlider(List images) {
+    return SizedBox(
+      height: 300,
+      child: PageView.builder(
+        controller: pageController,
+        itemCount: images.length,
+        onPageChanged: (index) {
+          setState(() => currentImage = index);
+        },
+        itemBuilder: (context, index) {
+          return Image.network(
+            "$imageUrl${images[index]}",
+            fit: BoxFit.cover,
+            width: double.infinity,
+            errorBuilder: (_, __, ___) => Container(
+              color: Colors.grey.shade300,
+              child: const Center(child: Icon(Icons.broken_image, size: 40)),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildBottomButton() {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(color: Colors.white),
-      child: Row(
-        children: [
-          Expanded(
-            child: OutlinedButton(
-              onPressed: () {
-                // Navigate to edit page
-              },
-              child: const Text("Edit"),
+      child: Center(
+        child: SizedBox(
+          width: 220,
+          height: 52,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor:
+                  isEditing ? const Color(0xFF2F6B57) : Colors.white,
+              foregroundColor:
+                  isEditing ? Colors.white : const Color(0xFF6C5B9A),
+              side: isEditing
+                  ? BorderSide.none
+                  : const BorderSide(color: Color(0xFF6C5B9A)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
             ),
+            onPressed: isUpdating
+                ? null
+                : () {
+                    if (isEditing) {
+                      updateWork();
+                    } else {
+                      setState(() {
+                        isEditing = true;
+                      });
+                    }
+                  },
+            child: isUpdating
+                ? const SizedBox(
+                    height: 22,
+                    width: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : Text(
+                    isEditing ? "Update" : "Edit",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              onPressed: deleteWork,
-              child: const Text("Delete"),
-            ),
-          ),
-        ],
+        ),
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final images = work?["images"] as List? ?? [];
+    final propertyImage = work?["property_image"];
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F7F6),
+      body: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: 120),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildPropertyImage(propertyImage),
+                  _buildTitleSection(),
+                  _buildQuickStatsOrFields(),
+                  _buildFinancialSection(),
+                  _buildFeatures(),
+                  const SizedBox(height: 15),
+                  const Text(
+                    'WORK PROOF',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17.0,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  _buildImageSlider(images),
+                ],
+              ),
+            ),
+            _buildTopBar(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: _buildBottomButton(),
     );
   }
 }
