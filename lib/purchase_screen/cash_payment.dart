@@ -137,7 +137,7 @@ class _CashPaymentPageState extends State<CashPaymentPage> {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    //Navigator.of(context).pop();
                     Future.delayed(const Duration(milliseconds: 250), () {
                       if (mounted) {
                         Navigator.push(

@@ -81,34 +81,6 @@ class _DashboardScreenState extends State<DashboardScreen>   with SingleTickerPr
     }
   }
 
-  // Widget _buildNotificationMessage() {
-  //   return Container(
-  //     margin: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-  //     padding: EdgeInsets.all(18),
-  //     decoration: BoxDecoration(
-  //       color: Colors.teal[50],
-  //       borderRadius: BorderRadius.circular(16),
-  //       border: Border.all(color: Colors.red, width: 2),
-  //     ),
-  //     child: Row(
-  //       children: [
-  //         Icon(Icons.info, color: Colors.red, size: 28),
-  //         SizedBox(width: 12),
-  //         Expanded(
-  //           child: Text(
-  //             "You have a new booking notification!",
-  //             style: TextStyle(
-  //               fontSize: 17,
-  //               fontWeight: FontWeight.w600,
-  //               color: Colors.black87,
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Future<Map<String, dynamic>?> fetchPaymentHistory(int bookingId) async {
     try {
       final url = Uri.parse(

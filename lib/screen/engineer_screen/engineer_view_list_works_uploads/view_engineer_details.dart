@@ -40,7 +40,7 @@ final ImagePicker picker = ImagePicker();
 
   Future<void> fetchWork() async {
     final response = await http.get(
-      Uri.parse("$baseUri/userapp/engineer/works/${widget.workId}/"),
+      Uri.parse("${baseUri}userapp/engineer/works/${widget.workId}/"),
     );
 
     if (response.statusCode == 200) {
@@ -57,7 +57,7 @@ final ImagePicker picker = ImagePicker();
 
   var request = http.MultipartRequest(
     "PATCH",
-    Uri.parse("$baseUri/userapp/engineer/work/update/${widget.workId}/"),
+    Uri.parse("${baseUri}userapp/engineer/work/update/${widget.workId}/"),
   );
 
   final newProjectName = projectNameController.text.trim();
@@ -108,7 +108,7 @@ final ImagePicker picker = ImagePicker();
 }
   Future<void> deleteWork() async {
     final response = await http.delete(
-      Uri.parse("$baseUri/userapp/engineer/works/${widget.workId}/"),
+      Uri.parse("${baseUri}userapp/engineer/works/${widget.workId}/"),
     );
 
     if (response.statusCode == 204 && mounted) {
