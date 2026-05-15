@@ -5,7 +5,6 @@ import 'package:house_construction_pro/purchase_screen/myorder_screen/myorder_vi
 import 'package:house_construction_pro/purchase_screen/view_cart/view_cart_screen.dart';
 import 'package:house_construction_pro/purchase_screen/view_each_pro/view_each_pro_screen.dart';
 import 'package:house_construction_pro/purchase_screen/view_product_home/view_product_model.dart';
-import 'package:house_construction_pro/purchase_screen/wishlist.dart';
 import 'package:house_construction_pro/purchase_screen/wishlist/wishlist_view.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
